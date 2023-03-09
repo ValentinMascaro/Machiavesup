@@ -26,7 +26,10 @@ public class Disposant {
         this.listeChoixPossible=listeInteger;
         this.marie=-1;
     }
-
+    public void clean()
+    {
+        this.marie=-1;
+    }
     public ArrayList<Integer> genererListeSouhait( ) {
         ArrayList<Integer> numbers = new ArrayList<>();
         Set<Integer> usedNumbers = new HashSet<>();
@@ -46,10 +49,8 @@ public class Disposant {
 
         if(logic.compare(listeSouhait.indexOf(proposants),marie))
         {
-            System.out.println("oui");
             return listeSouhait.indexOf(marie);
         }
-        System.out.println("non");
         return proposants;
     }
     public void genererComparaison()

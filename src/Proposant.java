@@ -19,6 +19,11 @@ public class Proposant {
         this.indiceProposition=0;
 
     }
+    public void clean()
+    {
+        this.isMarie=false;
+        this.indiceProposition=0;
+    }
     public int prochaineProposition(){
         if(indiceProposition>=listeSouhait.size())
         {

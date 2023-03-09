@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
         int seed=10;
-        int playset=4;
+        int playset=10;
         ArrayList<Disposant> disposants=new ArrayList<>();
         ArrayList<Proposant> proposants=new ArrayList<>();
         for(int i =0;i<playset;i++)
@@ -11,6 +12,7 @@ public class Main {
             Proposant proposant=new Proposant(i,playset);
             proposants.add(proposant);
         }
+        System.out.println("Disposants :");
         for(int i = 0 ; i<playset;i++)
         {
             Disposant disposant = new Disposant(i,playset,seed);
@@ -27,14 +29,29 @@ public class Main {
             disposants.add(disposant);
         }
 
-        System.out.println("------------");
+        System.out.println("------------\nProposants");
         for(int i = 0 ; i<playset;i++)
         {
             proposants.get(i).generateListePreference(seed);
             System.out.println(proposants.get(i).getListeSouhait());
             seed++;
         }
+        preferencePartielDisposant(proposants,disposants,true);
+        for(int i =0;i<playset;i++)
+        {
+            proposants.get(i).clean();
+            disposants.get(i).clean();
+        }
+        preferencePartielDisposant(proposants,disposants,false);
+    }
+    public static void preferencePartielDisposant(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants, boolean sens)
+    {
+        int playset=proposants.size();
         ArrayList<Proposant> pasMarie = new ArrayList<>(proposants);
+        if(sens)
+        {
+            Collections.reverse(pasMarie);
+        }
         while(!pasMarie.isEmpty())
         {
             Proposant proposantsActuel = pasMarie.get(0);
@@ -68,9 +85,11 @@ public class Main {
 
             }
         }
+        System.out.println("Resultat mariage");
         for(int i =0 ; i<playset;i++)
         {
             System.out.println("id : "+i+" -> "+disposants.get(i).getMarie());
         }
+
     }
 }
