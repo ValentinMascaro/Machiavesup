@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Demo listePartielPreference non deterministe">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="listePartiel ordonné OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Comparaison.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Comparaison.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
@@ -83,7 +83,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678366678511</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="listePartiel ordonné OK">
+      <created>1678447706641</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1678447706641</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -112,6 +119,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit, no verification" />
     <MESSAGE value="Demo listePartielPreference non deterministe" />
-    <option name="LAST_COMMIT_MESSAGE" value="Demo listePartielPreference non deterministe" />
+    <MESSAGE value="listePartiel ordonné OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="listePartiel ordonné OK" />
   </component>
 </project>

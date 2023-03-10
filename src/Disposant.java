@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Disposant {
     protected Comparaison logic;
@@ -72,8 +69,11 @@ public class Disposant {
         return listeSouhait;
     }
 
-    public void setListeSouhait(ArrayList<Integer> listeSouhait) {
-        this.listeSouhait = listeSouhait;
+    public void setListeSouhait(Integer[] listeSouhait) {
+       ArrayList<Integer> tmp = new ArrayList<>();
+        Collections.addAll(tmp,listeSouhait);
+        this.listeSouhait = tmp;
+        this.logic=new Comparaison(seed,this.listeSouhait);
     }
 
     public ArrayList<Integer> getListeChoixPossible() {

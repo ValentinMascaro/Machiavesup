@@ -13,6 +13,10 @@ public class Comparaison {
     }
     public boolean compare(int individu1,int individu2) // return true si individu1 meilleur
     {
+        if(listePreference.indexOf(individu1)==-1)
+        {
+            return false;
+        }
         if(individu2==-1)
         {
             return true;
