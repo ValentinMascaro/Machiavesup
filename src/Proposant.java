@@ -72,8 +72,11 @@ public class Proposant {
         return listeSouhait;
     }
 
-    public void setListeSouhait(ArrayList<Integer> listeSouhait) {
-        this.listeSouhait = listeSouhait;
+    public void setListeSouhait(Integer[] listeSouhait) {
+        ArrayList<Integer> tmp = new ArrayList<>();
+        Collections.addAll(tmp,listeSouhait);
+        this.listeSouhait = tmp;
+
     }
 
     public ArrayList<Integer> getListeChoixPossible() {
@@ -96,5 +99,9 @@ public class Proposant {
 
     public boolean isMarie() {
         return isMarie;
+    }
+
+    public int getIndiceProposition() {
+        return indiceProposition;
     }
 }

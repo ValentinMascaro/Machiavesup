@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Disposant {
     protected Comparaison logic;
@@ -47,10 +44,12 @@ public class Disposant {
     public int reponse(int proposants) // return a free husband or -1 if none is free
     {
 
-        if(logic.compare(listeSouhait.indexOf(proposants),marie))
+        if(logic.compare(proposants,marie))
         {
-            return listeSouhait.indexOf(marie);
+            //System.out.println("Femme : "+id+" accepte "+proposants +" rejette "+marie);
+            return marie;
         }
+       // System.out.println("Femme : "+id+" refuse "+proposants+ " rejette "+proposants);
         return proposants;
     }
     public void genererComparaison()
@@ -70,8 +69,11 @@ public class Disposant {
         return listeSouhait;
     }
 
-    public void setListeSouhait(ArrayList<Integer> listeSouhait) {
-        this.listeSouhait = listeSouhait;
+    public void setListeSouhait(Integer[] listeSouhait) {
+       ArrayList<Integer> tmp = new ArrayList<>();
+        Collections.addAll(tmp,listeSouhait);
+        this.listeSouhait = tmp;
+        this.logic=new Comparaison(seed,this.listeSouhait);
     }
 
     public ArrayList<Integer> getListeChoixPossible() {
@@ -107,10 +109,10 @@ public class Disposant {
     }
 
     public int getMarie() {
-        return marie;
+       return marie;
     }
 
     public void setMarie(int marie) {
-        this.marie = listeSouhait.indexOf(marie);
+        this.marie = marie;
     }
 }
