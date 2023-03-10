@@ -111,7 +111,10 @@ public class Disposant {
     public int getMarie() {
        return marie;
     }
-
+    public int getIndexMarie()
+    {
+        return listeSouhait.indexOf(marie);
+    }
     public void setMarie(int marie) {
         this.marie = marie;
     }

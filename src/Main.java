@@ -22,8 +22,26 @@ public class Main {
         disposant1.setListeSouhait(new Integer[]{1,0});
         disposant2.setListeSouhait(new Integer[]{0,1});
         galeShapley(proposants,disposants,true);
-
-
+        System.out.println("Disposants");
+        System.out.println(disposant1.getListeSouhait());
+        System.out.println(disposant2.getListeSouhait());
+        System.out.println("Proposants");
+        System.out.println(proposant1.getListeSouhait());
+        System.out.println(proposant2.getListeSouhait());
+        System.out.println(isItTrichable(disposants,proposants,0,disposants.get(0).getIndexMarie(),1));
+        proposants.get(disposant1.getMarie()).refus();
+        disposant1.setMarie(-1);
+        galeShapley(proposants,disposants,true);
+    }
+    public static boolean isItTrichable(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int idDisposant,int idProposantActuel,int idProposantSouhaite)
+    {
+        ArrayList<Integer> listeSouhaitProposantSouhaite = proposants.get(idProposantSouhaite).getListeSouhait();
+        Integer suivanteListeAttente = listeSouhaitProposantSouhaite.get(proposants.get(idProposantSouhaite).getIndiceProposition()+1);
+        if(disposants.get(suivanteListeAttente).reponse(idProposantActuel)!=idProposantActuel)
+        {
+            return true;
+        }
+        return false;
     }
    public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playset,int seed)
    {
