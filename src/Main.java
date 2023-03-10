@@ -3,8 +3,8 @@ import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) {
-        int seed=10;
-        int playset=10;
+        int seed=3;
+        int playset=8;
         ArrayList<Disposant> disposants=new ArrayList<>();
         ArrayList<Proposant> proposants=new ArrayList<>();
         for(int i =0;i<playset;i++)
@@ -20,7 +20,7 @@ public class Main {
             disposant.genererListeSouhait();
             disposant.genererComparaison();
             ArrayList<Integer> res = disposant.getListeSouhait();
-            System.out.println(res);
+            System.out.println(i+" : "+res);
             for(int j = 0; j <res.size();j++)
             {
                 proposants.get(res.get(j)).addIndividu(i);
@@ -33,16 +33,12 @@ public class Main {
         for(int i = 0 ; i<playset;i++)
         {
             proposants.get(i).generateListePreference(seed);
-            System.out.println(proposants.get(i).getListeSouhait());
+            System.out.println(i+" : "+proposants.get(i).getListeSouhait());
             seed++;
         }
         preferencePartielDisposant(proposants,disposants,true);
-        for(int i =0;i<playset;i++)
-        {
-            proposants.get(i).clean();
-            disposants.get(i).clean();
-        }
-        preferencePartielDisposant(proposants,disposants,false);
+
+
     }
     public static void preferencePartielDisposant(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants, boolean sens)
     {
@@ -59,7 +55,7 @@ public class Main {
             while(!proposantsActuel.isMarie())
             {
                 int proposition = proposantsActuel.prochaineProposition();
-
+              //  System.out.println("Homme : "+proposantsActuel.getId()+" propose à "+proposition);
                 if(proposition!=-1)
                 {
                     int reponse = disposants.get(proposition).reponse(proposantsActuel.getId());

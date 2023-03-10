@@ -97,4 +97,8 @@ public class Proposant {
     public boolean isMarie() {
         return isMarie;
     }
+
+    public int getIndiceProposition() {
+        return indiceProposition;
+    }
 }
