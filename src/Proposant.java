@@ -19,6 +19,10 @@ public class Proposant {
         this.indiceProposition=0;
 
     }
+    public int getMarie()
+    {
+        return this.listeSouhait.get(indiceProposition);
+    }
     public void clean()
     {
         this.isMarie=false;
@@ -35,7 +39,7 @@ public class Proposant {
     }
     public void setMariage() // on est marié a l'indice proposition jusqu'a preuve du contraire
     {
-       isMarie=true;
+        isMarie=true;
     }
     public void refus()
     {
@@ -72,9 +76,9 @@ public class Proposant {
         return listeSouhait;
     }
 
-    public void setListeSouhait(Integer[] listeSouhait) {
+    public void setListeSouhait(Integer[] liste) {
         ArrayList<Integer> tmp = new ArrayList<>();
-        Collections.addAll(tmp,listeSouhait);
+        Collections.addAll(tmp,liste);
         this.listeSouhait = tmp;
 
     }
@@ -103,5 +107,19 @@ public class Proposant {
 
     public int getIndiceProposition() {
         return indiceProposition;
+    }
+    public int getProchainListeAttente(){
+        if(indiceProposition+1>=listeSouhait.size())
+        {
+            return -1;
+        }
+        return listeSouhait.get(indiceProposition+1);
+    }
+    public int getProchainListeAttente(int indiceDecale){
+        if(indiceProposition+indiceDecale+1>=listeSouhait.size())
+        {
+            return -1;
+        }
+        return listeSouhait.get(indiceProposition+indiceDecale+1);
     }
 }

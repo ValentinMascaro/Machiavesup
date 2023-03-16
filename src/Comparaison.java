@@ -21,9 +21,9 @@ public class Comparaison {
         {
             return true;
         }
-       // System.out.println(listePreference);
-     //   System.out.println(listePreference.indexOf(individu1)+" "+listePreference.indexOf(individu2));
-       return listePreference.indexOf(individu1)==Math.min(listePreference.indexOf(individu1),listePreference.indexOf(individu2));
+        // System.out.println(listePreference);
+        //   System.out.println(listePreference.indexOf(individu1)+" "+listePreference.indexOf(individu2));
+        return listePreference.indexOf(individu1)==Math.min(listePreference.indexOf(individu1),listePreference.indexOf(individu2));
     }
     public int getRand() {
         return rand;

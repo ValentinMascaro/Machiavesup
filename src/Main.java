@@ -4,6 +4,35 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
+        int seed=67;
+        int playset=2;
+        // test();
+        for(int i=0;i<1;i++) {
+            ArrayList<Disposant> disposants=new ArrayList<>();
+            ArrayList<Proposant> proposants=new ArrayList<>();
+            System.out.println(seed);
+            init(disposants, proposants, 4, seed);
+            disposants.get(3).setListeSouhait(new Integer[]{2,0,1,3});
+            proposants.get(3).setListeSouhait(new Integer[]{1,3,0,2});
+
+            galeShapley(proposants, disposants, true);
+            printListeR(proposants,disposants);
+            for(int j = 0;j<playset;j++) {
+                ArrayList<Integer> prop = disposants.get(j).getListeSouhait();
+                for(int y = disposants.get(j).getIndexMarie()-1 ; y>=0;y--) {
+                    int dispoMarie = echangePossible(j,disposants, proposants, disposants.get(j).getMarie(), prop.get(y));//int dispoMarie = isItTrichable(disposants, proposants, disposants.get(j).getMarie(), prop.get(y));
+                    if(dispoMarie!=-1)
+                    {
+                        System.out.println(j+" obtiendrai : "+prop.get(y)+" par "+dispoMarie);
+                    }
+                }
+            }
+            seed++;
+        }
+
+    }
+    public static void test()
+    {
         int seed=1;
         int playset=2;
         ArrayList<Disposant> disposants=new ArrayList<>();
@@ -28,53 +57,123 @@ public class Main {
         System.out.println("Proposants");
         System.out.println(proposant1.getListeSouhait());
         System.out.println(proposant2.getListeSouhait());
-        System.out.println(isItTrichable(disposants,proposants,0,disposants.get(0).getIndexMarie(),1));
+        System.out.println(isItTrichable(disposants,proposants,0,1));
         proposants.get(disposant1.getMarie()).refus();
         disposant1.setMarie(-1);
         galeShapley(proposants,disposants,true);
-    }
-    public static boolean isItTrichable(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int idDisposant,int idProposantActuel,int idProposantSouhaite)
+    }//
+    public static int echangePossible(int cible,ArrayList<Disposant> disposants,ArrayList<Proposant> proposants, int indiceMarieActuel,int indiceMarieSouhaite)
     {
-        ArrayList<Integer> listeSouhaitProposantSouhaite = proposants.get(idProposantSouhaite).getListeSouhait();
-        Integer suivanteListeAttente = listeSouhaitProposantSouhaite.get(proposants.get(idProposantSouhaite).getIndiceProposition()+1);
-        if(disposants.get(suivanteListeAttente).reponse(idProposantActuel)!=idProposantActuel)
-        {
-            return true;
+        Proposant marieSouhaite=proposants.get(indiceMarieSouhaite); // 3
+        Proposant marieActuel = proposants.get(indiceMarieActuel); // 0
+        int FemmeMarieSouhaite=marieSouhaite.getMarie(); // 0
+
+        // 0 préfére 3 à 0 ? oui
+        if(disposants.get(FemmeMarieSouhaite).reponse(indiceMarieActuel)==indiceMarieSouhaite) {
+            // est-ce que prochaine prop de notre marie est la femme du marie qu'on souhaite ? oui
+            if(marieActuel.getProchainListeAttente()==FemmeMarieSouhaite)
+            {
+                System.out.println("échange direct");
+                return FemmeMarieSouhaite;
+            }
+            else
+            {
+                int nbrEtape=1;
+                // le prochain du prochain dans la liste d'attente
+                int disposantListeAttente=marieActuel.getProchainListeAttente(1);
+                while (disposantListeAttente != -1) {
+                    if(disposantListeAttente==FemmeMarieSouhaite)
+                    {
+                        System.out.println("échange indirect en "+nbrEtape+" étape");
+                        return FemmeMarieSouhaite;
+                    }
+                    if(disposants.get(disposantListeAttente).reponse(indiceMarieSouhaite) != indiceMarieSouhaite){
+                        return -1;
+                    }
+                    nbrEtape++;
+                    disposantListeAttente = marieSouhaite.getProchainListeAttente(nbrEtape);
+                }
+            }
         }
-        return false;
+        return -1;
     }
-   public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playset,int seed)
-   {
-       for(int i =0;i<playset;i++)
-       {
-           Proposant proposant=new Proposant(i,playset);
-           proposants.add(proposant);
-       }
-       System.out.println("Disposants :");
-       for(int i = 0 ; i<playset;i++)
-       {
-           Disposant disposant = new Disposant(i,playset,seed);
-           disposant.genererListeSouhait();
-           disposant.genererComparaison();
-           ArrayList<Integer> res = disposant.getListeSouhait();
-           System.out.println(i+" : "+res);
-           for(int j = 0; j <res.size();j++)
-           {
-               proposants.get(res.get(j)).addIndividu(i);
-           }
-           seed++;
-           disposants.add(disposant);
-       }
+    public static int isItTrichable(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int idProposantActuel,int idProposantSouhaite)
+    {
+        int dispoMarie = proposants.get(idProposantSouhaite).getMarie();
+        ArrayList<Integer> listeProposantActuel = proposants.get(idProposantActuel).getListeSouhait();
+        if(disposants.get(dispoMarie).reponse(idProposantActuel)!=idProposantActuel)
+        {
+            if(listeProposantActuel.indexOf(dispoMarie)==proposants.get(idProposantActuel).getIndiceProposition()+1)
+            {
+                System.out.println("échange parfait");
+            }
+            else{
+                System.out.println("échange imparfait");
+            }
+            return dispoMarie;
+        }
+        return -1;
+    }
+    public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playset,int seed)
+    {
+        for(int i =0;i<playset;i++)
+        {
+            Proposant proposant=new Proposant(i,playset);
+            proposants.add(proposant);
+        }
 
-       System.out.println("------------\nProposants");
-       for(int i = 0 ; i<playset;i++)
-       {
-           proposants.get(i).generateListePreference(seed);
-           System.out.println(i+" : "+proposants.get(i).getListeSouhait());
-           seed++;
-       }
-   }
+        for(int i = 0 ; i<playset;i++)
+        {
+            Disposant disposant = new Disposant(i,playset,seed);
+            disposant.genererListeSouhait();
+            disposant.genererComparaison();
+            ArrayList<Integer> res = disposant.getListeSouhait();
+            for(int j = 0; j <res.size();j++)
+            {
+                proposants.get(res.get(j)).addIndividu(i);
+            }
+            seed++;
+            disposants.add(disposant);
+        }
 
+        for(int i = 0 ; i<playset;i++)
+        {
+            proposants.get(i).generateListePreference(seed);
+            seed++;
+        }
+    }
+    public static void printListeR(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
+    {
+        System.out.println("Disposant");
+        for(int i =0;i<disposant.size();i++)
+        {
+            ArrayList<Integer> res = disposant.get(i).getListeSouhait();
+            System.out.print(i+" "+res);
+            System.out.println("->"+disposant.get(i).getMarie());
+        }
+        System.out.println("Proposant");
+        for(int i=0;i<proposant.size();i++)
+        {
+            ArrayList<Integer> res =proposant.get(i).getListeSouhait();
+            System.out.print(i+" "+res);
+            System.out.println("->"+proposant.get(i).getMarie());
+        }
+    }
+    public static void printListe(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
+    {
+        System.out.println("Disposant");
+        for(int i =0;i<disposant.size();i++)
+        {
+            ArrayList<Integer> res = disposant.get(i).getListeSouhait();
+            System.out.println(res);
+        }
+        System.out.println("Proposant");
+        for(int i=0;i<proposant.size();i++)
+        {
+            ArrayList<Integer> res =proposant.get(i).getListeSouhait();
+            System.out.println(res);
+        }
+    }
     public static void galeShapley(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants, boolean sens)
     {
         int playset=proposants.size();
@@ -90,7 +189,7 @@ public class Main {
             while(!proposantsActuel.isMarie())
             {
                 int proposition = proposantsActuel.prochaineProposition();
-              //  System.out.println("Homme : "+proposantsActuel.getId()+" propose à "+proposition);
+                //  System.out.println("Homme : "+proposantsActuel.getId()+" propose à "+proposition);
                 if(proposition!=-1)
                 {
                     int reponse = disposants.get(proposition).reponse(proposantsActuel.getId());

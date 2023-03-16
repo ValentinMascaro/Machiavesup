@@ -13,7 +13,7 @@ public class Disposant {
         this.id=id;
         Random rand = new Random(seed);
         this.nbrSouhaitMax=nbrSouhaitMax;
-        this.nbrSouhait=Math.abs(rand.nextInt(1,nbrSouhaitMax+1));
+        this.nbrSouhait=nbrSouhaitMax;//this.nbrSouhait=Math.abs(rand.nextInt(1,nbrSouhaitMax+1));
         ArrayList<Integer> listeInteger=new ArrayList<>();
         this.seed=seed;
         for(int i =0;i<nbrSouhait;i++)
@@ -49,7 +49,7 @@ public class Disposant {
             //System.out.println("Femme : "+id+" accepte "+proposants +" rejette "+marie);
             return marie;
         }
-       // System.out.println("Femme : "+id+" refuse "+proposants+ " rejette "+proposants);
+        // System.out.println("Femme : "+id+" refuse "+proposants+ " rejette "+proposants);
         return proposants;
     }
     public void genererComparaison()
@@ -70,7 +70,7 @@ public class Disposant {
     }
 
     public void setListeSouhait(Integer[] listeSouhait) {
-       ArrayList<Integer> tmp = new ArrayList<>();
+        ArrayList<Integer> tmp = new ArrayList<>();
         Collections.addAll(tmp,listeSouhait);
         this.listeSouhait = tmp;
         this.logic=new Comparaison(seed,this.listeSouhait);
@@ -109,7 +109,7 @@ public class Disposant {
     }
 
     public int getMarie() {
-       return marie;
+        return marie;
     }
     public int getIndexMarie()
     {
