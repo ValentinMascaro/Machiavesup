@@ -43,7 +43,11 @@ public class Disposant {
     }
     public int reponse(int proposants) // return a free husband or -1 if none is free
     {
-
+        if(proposants==marie)
+        {
+            System.out.println("j'avais raison c'était nécessaire :p"); // si ce print arrive c'est que j'avais raison :p
+            return -1; // n'arrive jamais en situation normal, mais est nécessaire pour .prochainEtatStablePour(), je crois, pas sur, on verra
+        }
         if(logic.compare(proposants,marie))
         {
             //System.out.println("Femme : "+id+" accepte "+proposants +" rejette "+marie);
