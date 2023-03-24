@@ -4,7 +4,8 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        int seed=166; // seed 67
+      // int seed =67;
+        int seed=166;
         int playset=10;
         // test();
         for(int i=0;i<1;i++) {
@@ -12,8 +13,8 @@ public class Main {
             ArrayList<Proposant> proposants=new ArrayList<>();
             System.out.println(seed);
             init(disposants, proposants, playset, seed);
-           // disposants.get(3).setListeSouhait(new Integer[]{2,0,1,3});
-           // proposants.get(3).setListeSouhait(new Integer[]{1,3,0,2}); seed 67
+          //  disposants.get(3).setListeSouhait(new Integer[]{2,0,1,3});
+           // proposants.get(3).setListeSouhait(new Integer[]{1,3,0,2}); //seed 67
 
             galeShapley(proposants, disposants, true);
             printListeR(proposants,disposants);
@@ -21,13 +22,13 @@ public class Main {
             {
                 if(disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie())!=0) {
                     System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
-                    Couple dispoPropo = prochainEtatStablePour(disposants, proposants, j,seed);
+                    Couple dispoPropo = prochainEtat(disposants, proposants, j,seed);
                     if (dispoPropo.getDisposant() != -1) {
-                        System.out.println(j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
+                        System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
                     }
                 }
             }
-            System.out.println("---------");
+            System.out.println("FIN");
           /* for(int j = 0;j<playset;j++) {
                 ArrayList<Integer> prop = disposants.get(j).getListeSouhait();
                 for(int y = disposants.get(j).getIndexMarie()-1 ; y>=0;y--) {
@@ -77,6 +78,35 @@ public class Main {
         disposant1.setMarie(-1);
         galeShapley(proposants,disposants,true);
     }//
+    public static Couple prochainEtat(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int disposantCible,int seed)
+    {
+        ArrayList<Couple> listeMariage = new ArrayList<>();
+        for(int i=0;i<disposants.size();i++){
+            listeMariage.add(i,new Couple(i,disposants.get(i).getMarie()));
+        }
+        int MarieLibere = disposants.get(disposantCible).getMarie();
+        Couple tmp = libereProposant(disposants,proposants,MarieLibere,listeMariage); // je libere un marie
+        if(tmp.getDisposant()==-1 || tmp.getProposant()==-1){
+            return tmp; // pas d'amélioration possible
+        }
+
+        int stop=0;
+        while(tmp.getDisposant()!=-1 && tmp.getDisposant()!=disposantCible)
+        {
+            listeMariage.get(tmp.getDisposant()).setProposant(MarieLibere);
+            MarieLibere= tmp.getProposant();
+            System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
+            tmp = libereProposant(disposants,proposants,tmp.getProposant(),listeMariage); // libere un marie et maj les mariage
+
+            stop++;
+            if(stop>200)
+            {
+                System.out.println("--- boucle infini---");
+                return tmp;
+            }
+        }
+        return new Couple(tmp.getDisposant(),MarieLibere);
+    }
     public static Couple prochainEtatStablePour(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int disposantCible,int seed)
     {
         int proposantLiberer = disposants.get(disposantCible).getMarie();
@@ -103,6 +133,32 @@ public class Main {
         {
             return new Couple(dispoPropo.getDisposant(),tmpRes);
         }
+    }
+    public static Couple libereProposant(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int libere, ArrayList<Couple> mariagePossible) // return le prochain marie liberer par quel disposant
+    {
+        Proposant proposantLibere = proposants.get(libere);
+        int prochainDisposant=proposantLibere.getProchainListeAttente();
+        if(prochainDisposant==-1)
+        {
+            return new Couple(-1,libere);
+        }
+        int etape=0;
+        int prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
+        System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
+        while(prochainLiberer==libere && prochainDisposant!=-1)
+        {
+            System.out.println(prochainDisposant+" refuse");
+            etape++;
+            prochainDisposant=proposantLibere.getProchainListeAttente(etape);
+            System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
+            if(prochainDisposant==-1)
+            {
+                return new Couple(-1,libere);
+            }
+            prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
+        }
+
+        return new Couple(prochainDisposant,prochainLiberer); // return l'individu qui prendrai le proposant, et le prochain proposant liberer
     }
     public static Couple libereProposant(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int libere) // return le prochain marie liberer par quel disposant
     {

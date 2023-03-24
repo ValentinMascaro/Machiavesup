@@ -41,6 +41,14 @@ public class Disposant {
         this.listeSouhait=numbers;
         return numbers;
     }
+    public int reponse(int proposant, int marieActuel)
+    {
+        if(logic.compare(proposant, marieActuel))
+        {
+            return marieActuel;
+        }
+        return proposant;
+    }
     public int reponse(int proposants) // return a free husband or -1 if none is free
     {
         if(proposants==marie)
