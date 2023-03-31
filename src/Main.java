@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed=166;
-        int playset=10;
+        int playset=20;            ;
         // test();
-        for(int i=0;i<1;i++) {
+        Random rand = new Random(10);
+        for(int i=0;i<100;i++) {
             ArrayList<Disposant> disposants=new ArrayList<>();
             ArrayList<Proposant> proposants=new ArrayList<>();
             System.out.println(seed);
@@ -20,10 +23,10 @@ public class Main {
             printListeR(proposants,disposants);
             for(int j =0 ; j<playset;j++)
             {
-                if(disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie())!=0) {
+                if(disposants.get(j).getMarie()!=-1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie())!=0) {
                     System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
                     Couple dispoPropo = prochainEtat(disposants, proposants, j,seed);
-                    if (dispoPropo.getDisposant() != -1) {
+                    if (dispoPropo.getDisposant() == j) {
                         System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
                     }
                 }
@@ -47,37 +50,7 @@ public class Main {
         }
 
     }
-    public static void test()
-    {
-        int seed=1;
-        int playset=2;
-        ArrayList<Disposant> disposants=new ArrayList<>();
-        ArrayList<Proposant> proposants=new ArrayList<>();
-        //init(disposants,proposants,playset,seed);
-        Proposant proposant1=new Proposant(0,2);
-        Proposant proposant2=new Proposant(1,2);
-        proposants.add(proposant1);proposants.add(proposant2);
-        Disposant disposant1=new Disposant(0,2,1);
-        Disposant disposant2=new Disposant(0,2,1);
-        disposants.add(disposant1);disposants.add(disposant2);
 
-        proposant1.setListeSouhait(new Integer[]{0,1});
-        proposant2.setListeSouhait(new Integer[]{1,0});
-
-        disposant1.setListeSouhait(new Integer[]{1,0});
-        disposant2.setListeSouhait(new Integer[]{0,1});
-        galeShapley(proposants,disposants,true);
-        System.out.println("Disposants");
-        System.out.println(disposant1.getListeSouhait());
-        System.out.println(disposant2.getListeSouhait());
-        System.out.println("Proposants");
-        System.out.println(proposant1.getListeSouhait());
-        System.out.println(proposant2.getListeSouhait());
-        System.out.println(isItTrichable(disposants,proposants,0,1));
-        proposants.get(disposant1.getMarie()).refus();
-        disposant1.setMarie(-1);
-        galeShapley(proposants,disposants,true);
-    }//
     public static Couple prochainEtat(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int disposantCible,int seed)
     {
         ArrayList<Couple> listeMariage = new ArrayList<>();
@@ -94,6 +67,10 @@ public class Main {
         while(tmp.getDisposant()!=-1 && tmp.getDisposant()!=disposantCible)
         {
             listeMariage.get(tmp.getDisposant()).setProposant(MarieLibere);
+            if(tmp.getProposant()==-1)
+            {
+                return tmp;
+            }
             MarieLibere= tmp.getProposant();
             System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
             tmp = libereProposant(disposants,proposants,tmp.getProposant(),listeMariage); // libere un marie et maj les mariage
@@ -226,7 +203,7 @@ public class Main {
     public static int isItTrichable(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int idProposantActuel,int idProposantSouhaite)
     {
         int dispoMarie = proposants.get(idProposantSouhaite).getMarie();
-        ArrayList<Integer> listeProposantActuel = proposants.get(idProposantActuel).getListeSouhait();
+        List<Integer> listeProposantActuel = proposants.get(idProposantActuel).getListeSouhait();
         if(disposants.get(dispoMarie).reponse(idProposantActuel)!=idProposantActuel)
         {
             if(listeProposantActuel.indexOf(dispoMarie)==proposants.get(idProposantActuel).getIndiceProposition()+1)
@@ -244,19 +221,20 @@ public class Main {
     {
         for(int i =0;i<playset;i++)
         {
-            Proposant proposant=new Proposant(i,playset);
+            Proposant proposant=new Proposant(i,seed);
             proposants.add(proposant);
+            seed++; // seed 67 plus valable
         }
 
         for(int i = 0 ; i<playset;i++)
         {
             Disposant disposant = new Disposant(i,playset,seed);
-            disposant.genererListeSouhait();
+            disposant.genererListeSouhait(proposants);
             disposant.genererComparaison();
-            ArrayList<Integer> res = disposant.getListeSouhait();
+            List<Integer> res = disposant.getListeSouhait();
             for(int j = 0; j <res.size();j++)
             {
-                proposants.get(res.get(j)).addIndividu(i);
+                proposants.get(res.get(j)).addDossierIndividu(disposant);
             }
             seed++;
             disposants.add(disposant);
@@ -273,14 +251,14 @@ public class Main {
         System.out.println("Disposant");
         for(int i =0;i<disposant.size();i++)
         {
-            ArrayList<Integer> res = disposant.get(i).getListeSouhait();
+            List<Integer> res = disposant.get(i).getListeSouhait();
             System.out.print(i+" "+res.stream().map( f -> (char)(f+'A')).toList());
             System.out.println("->"+(char) ( ('A'+disposant.get(i).getMarie()) ));
         }
         System.out.println("Proposant");
         for(int i=0;i<proposant.size();i++)
         {
-            ArrayList<Integer> res =proposant.get(i).getListeSouhait();
+            List<Integer> res =proposant.get(i).getListeSouhait();
             System.out.print( (char)('A'+i)+" "+res);
             System.out.println("->"+proposant.get(i).getMarie());
         }
@@ -290,16 +268,17 @@ public class Main {
         System.out.println("Disposant");
         for(int i =0;i<disposant.size();i++)
         {
-            ArrayList<Integer> res = disposant.get(i).getListeSouhait();
+            List<Integer> res = disposant.get(i).getListeSouhait();
             System.out.println(res);
         }
         System.out.println("Proposant");
         for(int i=0;i<proposant.size();i++)
         {
-            ArrayList<Integer> res =proposant.get(i).getListeSouhait();
+            List<Integer> res =proposant.get(i).getListeSouhait();
             System.out.println(res);
         }
     }
+
     public static void galeShapley(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants, boolean sens)
     {
         int playset=proposants.size();
