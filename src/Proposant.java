@@ -1,23 +1,40 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class Proposant {
     //protected Comparaison logic;
     protected int id;
     protected int nbrIndividu;
-    protected ArrayList<Integer> listeSouhait; // ordonné pour les proposant
+    protected List<Integer> listeSouhait; // ordonné pour les proposant
     protected  ArrayList<Integer> listeChoixPossible;
+    protected ArrayList<Disposant> listeDossier;
+
     protected int seed;
+    protected double reputation;
 
     protected int indiceProposition;
     protected boolean isMarie;
-    public Proposant(int id, int nbrIndividu) {
+    public Proposant(int id,int seed) {
         this.id = id;
-        this.nbrIndividu = this.nbrIndividu;
+
         this.listeChoixPossible=new ArrayList<Integer>();
         this.indiceProposition=0;
+        this.listeDossier=new ArrayList<>();
+        Random rand = new Random(seed);
+        this.reputation=rand.nextGaussian();
+        this.nbrIndividu = rand.nextInt(5,30);
 
+    }
+    public int getMarie()
+    {
+        if(indiceProposition!=listeSouhait.size()) {
+            return this.listeSouhait.get(indiceProposition);
+        }
+        return -1;
     }
     public void clean()
     {
@@ -35,7 +52,7 @@ public class Proposant {
     }
     public void setMariage() // on est marié a l'indice proposition jusqu'a preuve du contraire
     {
-       isMarie=true;
+        isMarie=true;
     }
     public void refus()
     {
@@ -43,6 +60,17 @@ public class Proposant {
         this.indiceProposition++;
     }
     public void generateListePreference(int seed) {
+        Random rand = new Random(seed);
+        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble()));
+        Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
+        this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
+
+    }
+    public void addDossierIndividu(Disposant disposant)
+    {
+        this.listeDossier.add(disposant);
+    }
+    public void generateListePreference(int seed, int deprecated) {
         ArrayList<Integer> pref = new ArrayList<>(this.listeChoixPossible);
         Random rand = new Random(seed);
         Collections.shuffle(pref, rand);
@@ -68,13 +96,13 @@ public class Proposant {
         this.nbrIndividu = nbrIndividu;
     }
 
-    public ArrayList<Integer> getListeSouhait() {
+    public List<Integer> getListeSouhait() {
         return listeSouhait;
     }
 
-    public void setListeSouhait(Integer[] listeSouhait) {
+    public void setListeSouhait(Integer[] liste) {
         ArrayList<Integer> tmp = new ArrayList<>();
-        Collections.addAll(tmp,listeSouhait);
+        Collections.addAll(tmp,liste);
         this.listeSouhait = tmp;
 
     }
@@ -103,5 +131,23 @@ public class Proposant {
 
     public int getIndiceProposition() {
         return indiceProposition;
+    }
+    public int getProchainListeAttente(){
+        if(indiceProposition+1>=listeSouhait.size())
+        {
+            return -1;
+        }
+        return listeSouhait.get(indiceProposition+1);
+    }
+    public int getProchainListeAttente(int indiceDecale){
+        if(indiceProposition+indiceDecale+1>=listeSouhait.size())
+        {
+            return -1;
+        }
+        return listeSouhait.get(indiceProposition+indiceDecale+1);
+    }
+
+    public double getReputation() {
+        return reputation;
     }
 }

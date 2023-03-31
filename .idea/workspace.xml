@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="listePartiel ordonné OK">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="prochainEtatStable avec liste total.">
+      <change afterPath="$PROJECT_DIR$/src/Pair.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Comparaison.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Comparaison.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
@@ -26,7 +27,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="listePartielOrdonne" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -90,7 +91,28 @@
       <option name="project" value="LOCAL" />
       <updated>1678447706641</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="setListeSouhait +pratique">
+      <created>1678450524964</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1678450524964</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Exemple manipulation playset 2">
+      <created>1678451365329</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1678451365329</updated>
+    </task>
+    <task id="LOCAL-00006" summary="prochainEtatStable avec liste total.">
+      <created>1679654827326</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1679654827326</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -120,6 +142,9 @@
     <MESSAGE value="First commit, no verification" />
     <MESSAGE value="Demo listePartielPreference non deterministe" />
     <MESSAGE value="listePartiel ordonné OK" />
-    <option name="LAST_COMMIT_MESSAGE" value="listePartiel ordonné OK" />
+    <MESSAGE value="setListeSouhait +pratique" />
+    <MESSAGE value="Exemple manipulation playset 2" />
+    <MESSAGE value="prochainEtatStable avec liste total." />
+    <option name="LAST_COMMIT_MESSAGE" value="prochainEtatStable avec liste total." />
   </component>
 </project>

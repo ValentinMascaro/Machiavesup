@@ -1,13 +1,14 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Comparaison {
     protected int rand;
 
-    protected ArrayList<Integer> listePreference;
+    protected List<Integer> listePreference;
 
-    public Comparaison(int seed, ArrayList<Integer> listeElement) {
+    public Comparaison(int seed, List<Integer> listeElement) {
         Random rand = new Random(seed);
         this.listePreference = listeElement;
     }
@@ -21,14 +22,15 @@ public class Comparaison {
         {
             return true;
         }
-       // System.out.println(listePreference);
-     //   System.out.println(listePreference.indexOf(individu1)+" "+listePreference.indexOf(individu2));
-       return listePreference.indexOf(individu1)==Math.min(listePreference.indexOf(individu1),listePreference.indexOf(individu2));
+        // System.out.println(listePreference);
+        //   System.out.println(listePreference.indexOf(individu1)+" "+listePreference.indexOf(individu2));
+        return listePreference.indexOf(individu1)==Math.min(listePreference.indexOf(individu1),listePreference.indexOf(individu2));
     }
     public int getRand() {
         return rand;
     }
     public void setRand(int rand) {
         this.rand = rand;
+
     }
 }
