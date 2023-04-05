@@ -8,12 +8,35 @@ public class Disposant {
     protected int nbrSouhait;
     protected int playset;
     protected List<Integer> listeSouhait;
+    protected List<Integer> listeAccepte;
+    protected List<Integer> listeAttente;
+    protected List<Integer> listeRefus;
     protected  ArrayList<Integer> listeChoixPossible;
     protected int seed;
     protected int marie;
     protected double note;
-    Disposant(int id,int playset,int seed){
+
+    public int getPlayset() {
+        return playset;
+    }
+
+    public List<Integer> getListeAccepte() {
+        return listeAccepte;
+    }
+
+    public List<Integer> getListeAttente() {
+        return listeAttente;
+    }
+
+    public List<Integer> getListeRefus() {
+        return listeRefus;
+    }
+
+    Disposant(int id, int playset, int seed){
         this.id=id;
+        this.listeAccepte=new ArrayList<>();
+        this.listeAttente=new ArrayList<>();
+        this.listeRefus=new ArrayList<>();
         Random rand = new Random(seed);
         this.playset=playset;
         this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
@@ -27,6 +50,32 @@ public class Disposant {
         this.listeChoixPossible=listeInteger;
         this.marie=-1;
         this.note = rand.nextGaussian(10,4);
+    }
+    public void add_accepte(Integer formation)
+    {
+        if(this.listeAttente.contains(formation))
+        {
+            this.listeAttente.remove(formation);
+        }
+        if(this.listeAccepte.contains(formation))
+        {return ;}
+        this.listeAccepte.add(formation);
+    }
+    public void add_refus(Integer formation)
+    {
+        if (this.listeRefus.contains(formation)) {
+            return;
+        }
+        this.listeRefus.add(formation);
+    }
+    public void add_attente(Integer formation, int position)
+    {
+        if(this.listeAttente.contains(formation))
+        {
+            return;
+        }
+        //this.listePositionListeAttente.add(position);
+        this.listeAttente.add(formation);
     }
     public void clean()
     {
@@ -47,7 +96,7 @@ public class Disposant {
        Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble()));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
-        return this.listeSouhait;
+       return this.listeSouhait;
    }
     public ArrayList<Integer> genererListeSouhait( ) {
         ArrayList<Integer> numbers = new ArrayList<>();
@@ -144,7 +193,12 @@ public class Disposant {
     }
 
     public int getMarie() {
-        return marie;
+        if(listeAccepte.size()!=0)
+        {
+            return this.listeAccepte.get(0);
+        }
+        return -1;
+
     }
     public int getIndexMarie()
     {
@@ -159,5 +213,22 @@ public class Disposant {
 
     public void setNote(double note) {
         this.note = note;
+    }
+
+    public void setListeSouhait(List<Integer> listeSouhait) {
+        this.listeSouhait = listeSouhait;
+
+    }
+
+    public void setListeAccepte(List<Integer> listeAccepte) {
+        this.listeAccepte = listeAccepte;
+    }
+
+    public void setListeAttente(List<Integer> listeAttente) {
+        this.listeAttente = listeAttente;
+    }
+
+    public void setListeRefus(List<Integer> listeRefus) {
+        this.listeRefus = listeRefus;
     }
 }

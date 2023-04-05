@@ -9,16 +9,19 @@ public class Proposant {
     //protected Comparaison logic;
     protected int id;
     protected int nbrIndividu;
+    protected int nbrIndividuAttente;
     protected List<Integer> listeSouhait; // ordonné pour les proposant
     protected  ArrayList<Integer> listeChoixPossible;
     protected ArrayList<Disposant> listeDossier;
-
+    protected List<Integer> listeAcceptation;
+    protected List<Integer> listeRefus;
+    protected List<Integer> listeAttente;
     protected int seed;
     protected double reputation;
 
     protected int indiceProposition;
     protected boolean isMarie;
-    public Proposant(int id,int seed) {
+    public Proposant(int id,int seed,int capaciteMin,int capaciteMax) {
         this.id = id;
 
         this.listeChoixPossible=new ArrayList<Integer>();
@@ -26,8 +29,85 @@ public class Proposant {
         this.listeDossier=new ArrayList<>();
         Random rand = new Random(seed);
         this.reputation=rand.nextGaussian();
-        this.nbrIndividu = rand.nextInt(5,30);
+        this.nbrIndividu = rand.nextInt(capaciteMin,capaciteMax);
+        this.nbrIndividuAttente=1000;
+    }
+    public void generateAllInnerListe(int seed)
+    {
+        this.generateListePreference(seed);
+        this.generateListeAcceptation();
+        this.generateListeAttente();
+        this.generateListeRefus(); // pas encore implementé
+    }
+    public void addEtudiantRefus(Integer e){
+        if (listeAcceptation.contains(e))
+        {
+            this.listeAcceptation.remove(e);
+            if(!this.listeAttente.isEmpty()) {
+                Integer etu = this.listeAttente.remove(0);
+                this.listeAcceptation.add(etu);
+            }
+        }
+        else if(listeAttente.contains(e))
+        {
+            this.listeAttente.remove(e);
+        }
+        if(!this.listeRefus.contains(e)) {
+            this.listeRefus.add(e);
+        }
+    }
+    public void generateListeAcceptation()
+    {
+        List<Integer> accepte=new ArrayList<>();
+        if(this.listeSouhait.size()==0)
+        {
+            this.listeAcceptation=accepte;
+            //return null;
+        }
+        int max_capacite_liste;
+        if(this.nbrIndividu>listeSouhait.size())
+        {
+            max_capacite_liste=listeSouhait.size();
+        }else
+        {
+            max_capacite_liste=this.nbrIndividu;
+        }
+        for(int i = 0;i<max_capacite_liste;i++)
+        {
+            accepte.add(this.listeSouhait.get(i));
+        }
+        this.listeAcceptation=accepte;
+       // return this.listeAcceptation;
+    }
+    public void generateListeAttente() {
+        ArrayList<Integer> attente = new ArrayList<>();
+        if (listeSouhait.size() == 0) {
+            this.listeAttente = attente;
+            //return null;
+        }
+        for (int i = this.nbrIndividu; i < Math.min(this.listeSouhait.size(), this.nbrIndividu + this.nbrIndividuAttente); i++) {
+            attente.add(this.listeSouhait.get(i));
+        }
+        this.listeAttente = attente;
+        //this.capacite_attente-=this.listeAttente.size();
+        //return this.listeAttente;
+    }
+    public void generateListeRefus() { // pas implementer
+        if(true)
+        {
+            this.listeRefus=new ArrayList<>();
+        }
+        List<Integer> refus = new ArrayList<>();
+        if (listeSouhait.size() == 0) {
+            this.listeRefus = refus;
+           // return null;
+        }
+        for (int i = this.nbrIndividu + this.nbrIndividuAttente; i < this.listeSouhait.size(); i++) {
+            refus.add(this.listeSouhait.get(i));
+        }
 
+        this.listeRefus = refus;
+        //return this.listeRefus;
     }
     public int getMarie()
     {
@@ -104,7 +184,9 @@ public class Proposant {
         ArrayList<Integer> tmp = new ArrayList<>();
         Collections.addAll(tmp,liste);
         this.listeSouhait = tmp;
-
+        this.generateListeAcceptation();
+        this.generateListeAttente();
+        this.generateListeRefus();
     }
 
     public ArrayList<Integer> getListeChoixPossible() {
@@ -133,21 +215,41 @@ public class Proposant {
         return indiceProposition;
     }
     public int getProchainListeAttente(){
-        if(indiceProposition+1>=listeSouhait.size())
+        if(this.listeAttente.size()!=0)
         {
-            return -1;
+            return this.listeAttente.get(0);
         }
-        return listeSouhait.get(indiceProposition+1);
+        return -1;
     }
     public int getProchainListeAttente(int indiceDecale){
-        if(indiceProposition+indiceDecale+1>=listeSouhait.size())
+        if(this.listeAttente.size()>indiceDecale)
         {
-            return -1;
+            return this.listeAttente.get(indiceDecale);
         }
-        return listeSouhait.get(indiceProposition+indiceDecale+1);
+        return -1;
     }
 
     public double getReputation() {
         return reputation;
+    }
+
+    public int getNbrIndividuAttente() {
+        return nbrIndividuAttente;
+    }
+
+    public ArrayList<Disposant> getListeDossier() {
+        return listeDossier;
+    }
+
+    public List<Integer> getListeAcceptation() {
+        return listeAcceptation;
+    }
+
+    public List<Integer> getListeRefus() {
+        return listeRefus;
+    }
+
+    public List<Integer> getListeAttente() {
+        return listeAttente;
     }
 }

@@ -8,46 +8,34 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed=166;
-        int playset=20;            ;
-        // test();
-        Random rand = new Random(10);
-        for(int i=0;i<100;i++) {
+        int nbrEtudiant=10;
+        int nbrFormation=5;
+        int capaciteMin=2;
+        int capaciteMax=3;
+        int nbrCycle=0;
+        int nbrTest=1;
+        for(int i=0;i<nbrTest;i++) {
             ArrayList<Disposant> disposants=new ArrayList<>();
             ArrayList<Proposant> proposants=new ArrayList<>();
-            System.out.println(seed);
-            init(disposants, proposants, playset, seed);
-          //  disposants.get(3).setListeSouhait(new Integer[]{2,0,1,3});
-           // proposants.get(3).setListeSouhait(new Integer[]{1,3,0,2}); //seed 67
-
-            galeShapley(proposants, disposants, true);
-            printListeR(proposants,disposants);
-            for(int j =0 ; j<playset;j++)
+            //System.out.println(seed);
+            Parcoursup(proposants, disposants,10,seed,nbrEtudiant,nbrFormation,capaciteMin,capaciteMax);
+            printListeMini(proposants,disposants);
+            printListe(proposants,disposants);
+            for(int j =0 ; j<disposants.size();j++)
             {
                 if(disposants.get(j).getMarie()!=-1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie())!=0) {
                     System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
                     Couple dispoPropo = prochainEtat(disposants, proposants, j,seed);
                     if (dispoPropo.getDisposant() == j) {
+                        nbrCycle++;
                         System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
                     }
                 }
             }
-            System.out.println("FIN");
-          /* for(int j = 0;j<playset;j++) {
-                ArrayList<Integer> prop = disposants.get(j).getListeSouhait();
-                for(int y = disposants.get(j).getIndexMarie()-1 ; y>=0;y--) {
-                    int dispoMarie = echangePossible(j,disposants, proposants, disposants.get(j).getMarie(), prop.get(y));//int dispoMarie = isItTrichable(disposants, proposants, disposants.get(j).getMarie(), prop.get(y));
-                    if(dispoMarie!=-1 )
-                    {
-                        if(echangePossible(dispoMarie,disposants,proposants, disposants.get(dispoMarie).getMarie(),disposants.get(j).getMarie())!=-1)
-                        {
-                            System.out.println(j + " obtiendrai : " + (char) (prop.get(y) + 'A') + " par " + dispoMarie);
-                        }
-
-                    }
-                }
-            }*/
             seed++;
         }
+        System.out.println(nbrCycle+" cycle trouvée sur "+nbrEtudiant+" avec "+nbrFormation+"formation pour "+nbrTest+ " test");
+        System.out.println("FIN");
 
     }
 
@@ -84,33 +72,6 @@ public class Main {
         }
         return new Couple(tmp.getDisposant(),MarieLibere);
     }
-    public static Couple prochainEtatStablePour(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int disposantCible,int seed)
-    {
-        int proposantLiberer = disposants.get(disposantCible).getMarie();
-        Couple dispoPropo = libereProposant(disposants,proposants,proposantLiberer);
-        int tmpRes=-1;
-        int stop=0;
-        while(dispoPropo.getDisposant()!=-1 && dispoPropo.getDisposant()!=disposantCible)
-        {
-            tmpRes=dispoPropo.getProposant();
-            System.out.println(dispoPropo.getDisposant() + " liberera "+(char) (dispoPropo.getProposant()+'A'));
-            dispoPropo = libereProposant(disposants,proposants,dispoPropo.getProposant());
-            stop++;
-            if(stop==10)
-            {
-                System.out.println("----BOUCLE INFINI--- "+seed);
-                return new Couple(-1,-1);
-            }
-        }
-        if(dispoPropo.getDisposant()==-1)
-        {
-            return dispoPropo;
-        }
-        else
-        {
-            return new Couple(dispoPropo.getDisposant(),tmpRes);
-        }
-    }
     public static Couple libereProposant(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int libere, ArrayList<Couple> mariagePossible) // return le prochain marie liberer par quel disposant
     {
         Proposant proposantLibere = proposants.get(libere);
@@ -137,98 +98,21 @@ public class Main {
 
         return new Couple(prochainDisposant,prochainLiberer); // return l'individu qui prendrai le proposant, et le prochain proposant liberer
     }
-    public static Couple libereProposant(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int libere) // return le prochain marie liberer par quel disposant
-    {
-        Proposant proposantLibere = proposants.get(libere);
-        int prochainDisposant=proposantLibere.getProchainListeAttente();
-        if(prochainDisposant==-1)
-        {
-           return new Couple(-1,libere);
-        }
-        int etape=0;
-       int prochainLiberer=disposants.get(prochainDisposant).reponse(libere);
-        System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
-        while(prochainLiberer==libere && prochainDisposant!=-1)
-        {
-            System.out.println(prochainDisposant+" refuse");
-            etape++;
-            prochainDisposant=proposantLibere.getProchainListeAttente(etape);
-            System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
-            if(prochainDisposant==-1)
-            {
-                return new Couple(-1,libere);
-            }
-            prochainLiberer=disposants.get(prochainDisposant).reponse(libere);
-        }
-
-        return new Couple(prochainDisposant,prochainLiberer); // return l'individu qui prendrai le proposant, et le prochain proposant liberer
-    }
 
 
-    public static int echangePossible(int cible,ArrayList<Disposant> disposants,ArrayList<Proposant> proposants, int indiceMarieActuel,int indiceMarieSouhaite)
-    {
-        Proposant marieSouhaite=proposants.get(indiceMarieSouhaite); // 3
-        Proposant marieActuel = proposants.get(indiceMarieActuel); // 0
-        int FemmeMarieSouhaite=marieSouhaite.getMarie(); // 0
 
-        // 0 préfére 3 à 0 ? oui
-        if(disposants.get(FemmeMarieSouhaite).reponse(indiceMarieActuel)==indiceMarieSouhaite) {
-            // est-ce que prochaine prop de notre marie est la femme du marie qu'on souhaite ? oui
-            if(marieActuel.getProchainListeAttente()==FemmeMarieSouhaite)
-            {
-                System.out.println("échange direct");
-                return FemmeMarieSouhaite;
-            }
-            else
-            {
-                int nbrEtape=1;
-                // le prochain du prochain dans la liste d'attente
-                int disposantListeAttente=marieActuel.getProchainListeAttente(1);
-                while (disposantListeAttente != -1) {
-                    if(disposantListeAttente==FemmeMarieSouhaite)
-                    {
-                        System.out.println("échange indirect en "+nbrEtape+" étape");
-                        return FemmeMarieSouhaite;
-                    }
-                    if(disposants.get(disposantListeAttente).reponse(indiceMarieSouhaite) != indiceMarieSouhaite){
-                        return -1;
-                    }
-                    nbrEtape++;
-                    disposantListeAttente = marieSouhaite.getProchainListeAttente(nbrEtape);
-                }
-            }
-        }
-        return -1;
-    }
-    public static int isItTrichable(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int idProposantActuel,int idProposantSouhaite)
+    public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playsetEtudiant,int playsetFormation,int seed,int capaciteMin,int capaciteMax)
     {
-        int dispoMarie = proposants.get(idProposantSouhaite).getMarie();
-        List<Integer> listeProposantActuel = proposants.get(idProposantActuel).getListeSouhait();
-        if(disposants.get(dispoMarie).reponse(idProposantActuel)!=idProposantActuel)
+        for(int i =0;i<playsetFormation;i++)
         {
-            if(listeProposantActuel.indexOf(dispoMarie)==proposants.get(idProposantActuel).getIndiceProposition()+1)
-            {
-                System.out.println("échange parfait");
-            }
-            else{
-                System.out.println("échange imparfait");
-            }
-            return dispoMarie;
-        }
-        return -1;
-    }
-    public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playset,int seed)
-    {
-        for(int i =0;i<playset;i++)
-        {
-            Proposant proposant=new Proposant(i,seed);
+            Proposant proposant=new Proposant(i,seed,capaciteMin,capaciteMax);
             proposants.add(proposant);
-            seed++; // seed 67 plus valable
+            seed++;
         }
 
-        for(int i = 0 ; i<playset;i++)
+        for(int i = 0 ; i<playsetEtudiant;i++)
         {
-            Disposant disposant = new Disposant(i,playset,seed);
+            Disposant disposant = new Disposant(i,playsetFormation,seed);
             disposant.genererListeSouhait(proposants);
             disposant.genererComparaison();
             List<Integer> res = disposant.getListeSouhait();
@@ -240,91 +124,150 @@ public class Main {
             disposants.add(disposant);
         }
 
-        for(int i = 0 ; i<playset;i++)
+        for(int i = 0 ; i<playsetFormation;i++)
         {
-            proposants.get(i).generateListePreference(seed);
+            proposants.get(i).generateAllInnerListe(seed);
             seed++;
-        }
-    }
-    public static void printListeR(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
-    {
-        System.out.println("Disposant");
-        for(int i =0;i<disposant.size();i++)
-        {
-            List<Integer> res = disposant.get(i).getListeSouhait();
-            System.out.print(i+" "+res.stream().map( f -> (char)(f+'A')).toList());
-            System.out.println("->"+(char) ( ('A'+disposant.get(i).getMarie()) ));
-        }
-        System.out.println("Proposant");
-        for(int i=0;i<proposant.size();i++)
-        {
-            List<Integer> res =proposant.get(i).getListeSouhait();
-            System.out.print( (char)('A'+i)+" "+res);
-            System.out.println("->"+proposant.get(i).getMarie());
         }
     }
     public static void printListe(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
     {
         System.out.println("Disposant");
-        for(int i =0;i<disposant.size();i++)
+        for(Disposant e : disposant)
         {
-            List<Integer> res = disposant.get(i).getListeSouhait();
-            System.out.println(res);
+            List<Integer> souhait = e.getListeSouhait();
+            List<Integer> accepte = e.getListeAccepte();
+            List<Integer> attente = e.getListeAttente();
+            List<Integer> refus = e.getListeRefus();
+            System.out.println("Etudiant : "+e.getId());
+            System.out.println("Souhait : "+souhait.stream().map(f->(char)(f+'A')).toList());
+            System.out.println("Accepte : "+accepte.stream().map(f->(char)(f+'A')).toList());
+            System.out.println("Attente : "+attente.stream().map(f->(char)(f+'A')).toList());
+            System.out.println("Refus : "+refus.stream().map(f->(char)(f+'A')).toList());
         }
         System.out.println("Proposant");
-        for(int i=0;i<proposant.size();i++)
+        for(Proposant p : proposant)
         {
-            List<Integer> res =proposant.get(i).getListeSouhait();
-            System.out.println(res);
+            List<Integer> souhait = p.getListeSouhait();
+            List<Integer> accepte = p.getListeAcceptation();
+            List<Integer> attente = p.getListeAttente();
+            List<Integer> refus = p.getListeRefus();
+            System.out.println("Formation : "+(char)('A'+p.getId()));
+            System.out.println("Souhait : "+souhait);
+            System.out.println("Accepte "+accepte.size()+" / "+p.getNbrIndividu()+" : "+accepte);
+            System.out.println("Attente : "+attente);
+            System.out.println("Refus : "+refus);
         }
     }
-
-    public static void galeShapley(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants, boolean sens)
+    public static void printListeMini(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
     {
-        int playset=proposants.size();
-        ArrayList<Proposant> pasMarie =new ArrayList<>(proposants.stream().filter(f ->!f.isMarie()).collect(Collectors.toList()));;
-        if(sens)
+        System.out.println("Disposant");
+        for(Disposant e : disposant)
         {
-            Collections.reverse(pasMarie);
+            List<Integer> souhait = e.getListeSouhait();
+            List<Integer> accepte = e.getListeAccepte();
+            List<Integer> attente = e.getListeAttente();
+            List<Integer> refus = e.getListeRefus();
+            System.out.print("Etudiant : "+e.getId()+ " "+ (char)('A'+e.getMarie()));
+            System.out.println(" Souhait : "+souhait.stream().map(f->(char)(f+'A')).toList());
         }
-        while(!pasMarie.isEmpty())
+        System.out.println("Proposant");
+        for(Proposant p : proposant)
         {
-            Proposant proposantsActuel = pasMarie.get(0);
-            pasMarie.remove(proposantsActuel);
-            while(!proposantsActuel.isMarie())
+            List<Integer> souhait = p.getListeSouhait();
+            List<Integer> accepte = p.getListeAcceptation();
+            List<Integer> attente = p.getListeAttente();
+            List<Integer> refus = p.getListeRefus();
+            System.out.print("Formation : "+(char)('A'+p.getId())+" "+ p.getNbrIndividu()+" places");
+            System.out.println(" Souhait : "+souhait+ " "+ accepte );
+        }
+    }
+    public static void Appel(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants)
+    {
+
+        for(int i = 0 ; i < proposants.size();i++)
+        {
+            Proposant formationI = proposants.get(i);
+            List<Integer> listAccepte = formationI.getListeAcceptation();
+            List<Integer> listAttente = formationI.getListeAttente();
+            List<Integer> listRefus = formationI.getListeRefus();
+            for(int j =0 ; j < listAccepte.size();j++)
             {
-                int proposition = proposantsActuel.prochaineProposition();
-                //  System.out.println("Homme : "+proposantsActuel.getId()+" propose à "+proposition);
-                if(proposition!=-1)
-                {
-                    int reponse = disposants.get(proposition).reponse(proposantsActuel.getId());
-                    if (reponse != proposantsActuel.getId()) {
-                        proposantsActuel.setMariage();
-                        disposants.get(proposition).setMarie(proposantsActuel.getId());
-                        pasMarie.remove(proposantsActuel);
-                        if(reponse!=-1)
-                        {
-                            proposants.get(reponse).refus();
-                            pasMarie.add(proposants.get(reponse));
-                        }
-                    }
-                    else{
-                        proposantsActuel.refus();
-                        pasMarie.add(proposants.get(reponse));
-                    }
-
-                }
-                else {
-                    pasMarie.remove(proposantsActuel);
-                }
-
+                disposants.get(listAccepte.get(j)).add_accepte(i);
+            }
+            for(int j =0 ; j < listAttente.size();j++)
+            {
+                disposants.get(listAttente.get(j)).add_attente(i,j);
+            }
+            for (int j = 0; j < listRefus.size(); j++) {
+                disposants.get(listRefus.get(j)).add_refus(i);
             }
         }
-        System.out.println("Resultat mariage");
-        for(int i =0 ; i<playset;i++)
+    }
+    public static void Reponse(Strategie strategie,ArrayList<Proposant> proposants,ArrayList<Disposant> disposants)
+    {
+        applicationStrategie(strategie,disposants);
+        for(Disposant e : disposants)
         {
-            System.out.println("id : "+i+" -> "+disposants.get(i).getMarie());
+            List<Integer> listeRefus = e.getListeRefus();
+            for(int j = 0 ; j < listeRefus.size();j++)
+            {
+                proposants.get(listeRefus.get(j)).addEtudiantRefus(e.getId());
+            }
         }
+    }
+    public static void applicationStrategie(Strategie strategie, List<Disposant> etudiants)
+    {
+        //
+        for(Disposant e : etudiants) // tout les etudiant
+        {
+            List<Integer> choixAttente = strategie.choixParmiAttente(e);
+            List<Integer> formationRefuse = new ArrayList<>(e.getListeRefus());
+            List<Integer> listeAttenteAvantStrat = new ArrayList<>(e.getListeAttente());
 
+            //  Etudiant.get(i).setListePositionListeAttente(listePositionAttente);
+            listeAttenteAvantStrat.removeAll(choixAttente); // fait la différence entre les attente avant et en attente après
+            formationRefuse.addAll(listeAttenteAvantStrat); // les individu qui ne sont plus en attente sont refusé
+            e.setListeRefus(formationRefuse);
+            e.setListeAttente(choixAttente);
+            ///// acceptation
+            Integer formationAccepte = strategie.choixParmiAcceptation(e);
+            ArrayList<Integer> formatioAccepteAvantStrat = new ArrayList<>(e.getListeAccepte());
+            if(formationAccepte!=null)
+            {
+                formatioAccepteAvantStrat.remove(formationAccepte);
+                formationRefuse.addAll(formatioAccepteAvantStrat);
+                e.setListeRefus(formationRefuse);
+                ArrayList<Integer> retour = new ArrayList<>();
+                retour.add(formationAccepte);
+                e.setListeAccepte(retour);
+            }
+            else
+            {
+                formationRefuse.addAll(formatioAccepteAvantStrat);
+                e.setListeRefus(formationRefuse);
+                e.setListeAccepte(new ArrayList<Integer>());
+            }
+        }
+    }
+    public static void Parcoursup(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants,int nbrJour,int seed,int nbrEtudiant,int nbrFormation,int capaciteMin,int capaciteMax)
+    {
+        Strategie strategie = new StrategieDefault();
+        init(disposants,proposants,nbrEtudiant,nbrFormation,seed,capaciteMin,capaciteMax);
+        disposants.get(2).setListeSouhait(new Integer[]{2,4,0,1,3});
+        proposants.get(2).setListeSouhait(new Integer[]{3,4,2,6,7,1});
+        disposants.get(4).setListeSouhait(new Integer[]{4,0,2,1,3});
+        proposants.get(0).setListeSouhait(new Integer[]{9,5,2,0,6,4,7,1});
+        proposants.get(4).setListeSouhait(new Integer[]{5,2,6,4,1,8});
+       for(int jour = 0; jour < nbrJour ; jour++)
+       {
+        //   System.out.println("Jour : "+jour+" / "+nbrJour);
+         //  System.out.println("---------------------------");
+         //  printListe(proposants,disposants);
+           Appel(proposants,disposants);
+         //  printListe(proposants,disposants);
+           Reponse(strategie,proposants,disposants);
+         //  printListe(proposants,disposants);
+       }
     }
 }
