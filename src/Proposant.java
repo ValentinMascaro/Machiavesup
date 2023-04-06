@@ -21,7 +21,8 @@ public class Proposant {
 
     protected int indiceProposition;
     protected boolean isMarie;
-    public Proposant(int id,int seed,int capaciteMin,int capaciteMax) {
+    protected double bruit;
+    public Proposant(int id,int seed,int capaciteMin,int capaciteMax,double bruit) {
         this.id = id;
 
         this.listeChoixPossible=new ArrayList<Integer>();
@@ -31,6 +32,7 @@ public class Proposant {
         this.reputation=rand.nextGaussian();
         this.nbrIndividu = rand.nextInt(capaciteMin,capaciteMax);
         this.nbrIndividuAttente=1000;
+        this.bruit = bruit;
     }
     public void generateAllInnerListe(int seed)
     {
@@ -141,7 +143,7 @@ public class Proposant {
     }
     public void generateListePreference(int seed) {
         Random rand = new Random(seed);
-        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble()));
+        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble(1,this.bruit)));
         Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
         this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
 

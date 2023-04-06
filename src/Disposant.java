@@ -15,6 +15,7 @@ public class Disposant {
     protected int seed;
     protected int marie;
     protected double note;
+    protected double bruit;
 
     public int getPlayset() {
         return playset;
@@ -32,7 +33,7 @@ public class Disposant {
         return listeRefus;
     }
 
-    Disposant(int id, int playset, int seed){
+    Disposant(int id, int playset, int seed,double bruit){
         this.id=id;
         this.listeAccepte=new ArrayList<>();
         this.listeAttente=new ArrayList<>();
@@ -50,6 +51,7 @@ public class Disposant {
         this.listeChoixPossible=listeInteger;
         this.marie=-1;
         this.note = rand.nextGaussian(10,4);
+        this.bruit = bruit;
     }
     public void add_accepte(Integer formation)
     {
@@ -93,7 +95,7 @@ public class Disposant {
                usedNumbers.add(number);
            }
        }
-       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble()));
+       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(1,this.bruit)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
        return this.listeSouhait;
