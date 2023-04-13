@@ -91,11 +91,11 @@ public class Disposant {
        while (formation.size() < this.nbrSouhait) {
            int number = rand.nextInt(playset-1+1);
            if (!usedNumbers.contains(number)) {
-               formation.add(proposants.get(number));
-               usedNumbers.add(number);
+               formation.add(proposants.get((int) number));
+               usedNumbers.add((int)number);
            }
        }
-       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(1,this.bruit)));
+       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*20,this.bruit*20)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
        return this.listeSouhait;

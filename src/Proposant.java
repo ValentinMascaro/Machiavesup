@@ -143,7 +143,7 @@ public class Proposant {
     }
     public void generateListePreference(int seed) {
         Random rand = new Random(seed);
-        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble(1,this.bruit)));
+        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble(-this.bruit*20,this.bruit*20)));
         Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
         this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
 
