@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="diffplug.guava.collect" type="repository">
+    <properties maven-id="com.diffplug.guava:guava-collect:19.0.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/diffplug/guava/guava-collect/19.0.0/guava-collect-19.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/diffplug/guava/guava-core/19.0.0/guava-core-19.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/j2objc/j2objc-annotations/0.1/j2objc-annotations-0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

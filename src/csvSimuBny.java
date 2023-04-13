@@ -4,25 +4,57 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class csvSimuBny {
     private List<Integer> nbrdemande;
     private List<Integer> note;
-    private BufferedReader csvFile;
+    private String csvFile;
     public csvSimuBny(String cheminFichier)
     {
-        try {
-             this.csvFile= new BufferedReader(new FileReader("src/"+cheminFichier));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.csvFile="src/"+cheminFichier;
         this.nbrdemande=new ArrayList<>();
         this.note = new ArrayList<>();
     }
+    public List<Double> getReputation()
+    {
+        List<Integer> liste2 = this.getNbrAdmis();
+        List<Integer> liste1 = this.getNbrProposition();
+        if (liste1.size() != liste2.size()) {
+            throw new IllegalArgumentException("Les deux listes doivent avoir la même taille.");
+        }
+
+        List<Double> resultat = IntStream.range(0, liste1.size())
+                .mapToDouble(i ->((double)liste1.get(i) / (double)liste2.get(i)))
+                .boxed()
+                .collect(Collectors.toList());
+
+        return resultat;
+    }
+    public List<Double> getReputation2()
+    {
+        List<Integer> liste1 = this.getNbrAdmis();
+        List<Integer> liste2 = this.getNbrProposition();
+        if (liste1.size() != liste2.size()) {
+            throw new IllegalArgumentException("Les deux listes doivent avoir la même taille.");
+        }
+
+        List<Double> resultat = IntStream.range(0, liste1.size())
+                .mapToDouble(i ->20*((double)liste1.get(i) / (double)liste2.get(i)))
+                .boxed()
+                .collect(Collectors.toList());
+
+        return resultat;
+    }
     public void setNbrdemande() {
-
-        BufferedReader reader = this.csvFile;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(this.csvFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         List<Integer> columnEffectif = new ArrayList<>();
-
         try {
            // reader = new BufferedReader(new FileReader(csvFile));
             String header = reader.readLine(); // Lire la première ligne pour obtenir les noms des colonnes
@@ -66,7 +98,12 @@ public class csvSimuBny {
 
     public List<Integer> getNbrProposition() {
         //String csvFile = "chemin/vers/votre/fichier.csv";
-        BufferedReader reader = this.csvFile;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(this.csvFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         List<Integer> columnEffectif = new ArrayList<>();
 
         try {
@@ -86,7 +123,7 @@ public class csvSimuBny {
 
             if (colIndex == -1) {
                 System.out.println("La colonne 'Effectif total des candidats ayant reçu une proposition d’admission de la part de l’établissement' n'a pas été trouvée.");
-                return;
+                return null;
             }
 
             String nextLine;
@@ -111,7 +148,12 @@ public class csvSimuBny {
     }
     public List<Integer> getNbrAdmis()  {
        // String csvFile = "chemin/vers/votre/fichier.csv";
-        BufferedReader reader = this.csvFile;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(this.csvFile));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         List<Integer> columnEffectif = new ArrayList<>();
 
         try {
@@ -152,6 +194,11 @@ public class csvSimuBny {
             }
         }
         // Afficher les valeurs stockées dans le tableau
-        this.nbrdemande=columnEffectif;
+        //this.nbrdemande=columnEffectif;
+        return columnEffectif;
     }
+
+    public List<Integer> getNbrdemande() {
+        return nbrdemande;
     }
+}

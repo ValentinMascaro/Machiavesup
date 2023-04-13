@@ -8,9 +8,10 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
 
-        csvSimuBny csv = new csvSimuBny("fichiercsv.csv");
+        csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv");
         csv.setNbrdemande();
         System.out.println(csv.getNbrProposition());
+        System.out.println(csv.getReputation()); // 1 = très bien
 
     }
     public static void test(){

@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Liste fonction gaussienne" />
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Parcoursup + cycle ( avec test, 0 resultat)">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/diffplug_guava_collect.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/diffplug_guava_core.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Machiavesup.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Machiavesup.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/csvSimuBny.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/csvSimuBny.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +20,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -42,10 +50,11 @@
     "Repository.Attach.Sources": "false",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "project.structure.last.edited": "Project",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "C:/Users/Valen/.m2/repository/com/diffplug/guava/guava-core/19.0.0/guava-core-19.0.0.jar",
+    "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.packagesearch.PackageSearchGeneralConfigurable"
+    "project.structure.side.proportion": "0.2"
   }
 }]]></component>
   <component name="RunManager">
@@ -58,6 +67,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -113,7 +124,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679654827326</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Parcoursup + cycle ( avec test, 0 resultat)">
+      <created>1680708140135</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1680708140135</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -127,7 +145,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="listePartielOrdonne" />
+                        <option value="listeOrdonneReflechiBruiter" />
                       </list>
                     </value>
                   </entry>
@@ -146,6 +164,7 @@
     <MESSAGE value="setListeSouhait +pratique" />
     <MESSAGE value="Exemple manipulation playset 2" />
     <MESSAGE value="prochainEtatStable avec liste total." />
-    <option name="LAST_COMMIT_MESSAGE" value="prochainEtatStable avec liste total." />
+    <MESSAGE value="Parcoursup + cycle ( avec test, 0 resultat)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Parcoursup + cycle ( avec test, 0 resultat)" />
   </component>
 </project>
