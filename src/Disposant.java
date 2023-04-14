@@ -107,6 +107,7 @@ public class Disposant {
     }
    public List<Integer> genererListeSouhait(Map<Integer,List<Proposant>> proposants,ArrayList<Proposant> proposantList)
    {
+       System.out.println("Nbr souhait :"+this.nbrSouhait);
        int length=proposants.size();
         Set<Integer> formationSet = new HashSet<>();
         Random rand = new Random(seed);
@@ -114,36 +115,39 @@ public class Disposant {
        double ecartType = 1.5;
        // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
        while (formationSet.size() < this.nbrSouhait) {
-           int valeur = (int) (rand.nextGaussian() * ecartType + moyenne); // un nombre aléatoire avec une moyenne de la note de l'étudiant
+           double valeurReel =  (rand.nextGaussian() * ecartType + moyenne); // un nombre aléatoire avec une moyenne de la note de l'étudiant
+           int valeur = Math.min(Math.max((int) Math.round(valeurReel), 0), proposants.size());
            System.out.println("id : "+this.id+" choix bloc :"+valeur);
            List<Proposant> blocI = new ArrayList<>(proposants.get(valeur));
-           boolean done = true;
-           while(done ) {
+           while(true) { // sortie avec un break
+               if(blocI.size()==0)
+               {
+                   proposants.remove(valeur);
+                   if(proposants.size()==0)
+                   {
+                       nbrSouhait= formationSet.size();
+                       break;
+                   }
+                   break;
+               }
                int choixRandom = rand.nextInt(0, blocI.size());
                System.out.println(choixRandom + " dans " + valeur);
-               if (!(formationSet.contains(blocI.get(choixRandom).getId()))) {
-                   if(blocI.size()>0) {
+               if ((formationSet.contains(blocI.get(choixRandom).getId()))) {
                        blocI.remove(choixRandom);
-                       done=true;
-                   }else{
-                       done = false;
+                       break;
                    }
                     // retire un nbr
-               } else {
+                else {
                    if (blocI.get(choixRandom).nouvelleDemande(this)) {
+                       System.out.println("SOuhaute : "+blocI.get(choixRandom).getId());
                        formationSet.add(blocI.get(choixRandom).getId());
-                       done = false; // c fait
+                      break;
                    }
-                 else{
-                   if (proposants.get(valeur).size() == 0) {
-                       done = false;
-                   } else {
-                       proposants.get(valeur).remove(choixRandom);
-                       done = true; // c pas fait
-                   }
+                    else{
+                   proposants.get(valeur).remove(choixRandom);
+                   blocI.remove(choixRandom);
                }
            }
-
            }
        }
        ArrayList<Proposant> formation = new ArrayList<>();
