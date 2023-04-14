@@ -16,7 +16,7 @@ public class Disposant {
     protected int marie;
     protected double note;
     protected double bruit;
-
+    protected int bloc;
     public int getPlayset() {
         return playset;
     }
@@ -33,6 +33,28 @@ public class Disposant {
         return listeRefus;
     }
 
+    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux){
+        this.bloc=(int)note;
+        this.id=id;
+        this.listeAccepte=new ArrayList<>();
+        this.listeAttente=new ArrayList<>();
+        this.listeRefus=new ArrayList<>();
+        Random rand = new Random(seed);
+        this.playset=playset;
+        //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
+        double moyenne =moyenneNbrVoeux;
+        double ecartType = 1.5;
+        double valeur = rand.nextGaussian() * ecartType + moyenne;
+        // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
+        this.nbrSouhait = Math.min(Math.max((int) Math.round(valeur), 0), 10);
+        this.marie=-1;
+        double aleatoire = rand.nextDouble();
+        double y = note;
+        double x = note+1.0;
+        // Calculer la note aléatoire entre x et y
+       this.note= aleatoire * (y - x) + x;
+        this.bruit = bruit;
+    }
     Disposant(int id, int playset, int seed,double bruit){
         this.id=id;
         this.listeAccepte=new ArrayList<>();
@@ -83,19 +105,33 @@ public class Disposant {
     {
         this.marie=-1;
     }
-   public List<Integer> genererListeSouhait(List<Proposant> proposants)
+   public List<Integer> genererListeSouhait(Map<Integer,List<Proposant>> proposants)
    {
-       ArrayList<Proposant> formation = new ArrayList<>();
-       Set<Integer> usedNumbers = new HashSet<>();
-       Random rand = new Random(seed);
+       int length=proposants.size();
+        ArrayList<Proposant> formation = new ArrayList<>();
+        Random rand = new Random(seed);
+       double moyenne = this.note;
+       double ecartType = 1.5;
+       double valeur = rand.nextGaussian() * ecartType + moyenne;
+       // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
        while (formation.size() < this.nbrSouhait) {
-           int number = rand.nextInt(playset-1+1);
-           if (!usedNumbers.contains(number)) {
-               formation.add(proposants.get((int) number));
-               usedNumbers.add((int)number);
+           Set<Integer> usedNumbers = new HashSet<>();
+           int entier = Math.min(Math.max((int) Math.round(valeur), 0), 10);
+           int size=proposants.get(entier).size();
+           int choixRandom=rand.nextInt(0,size);
+           while(usedNumbers.contains(choixRandom))
+           {
+               choixRandom=rand.nextInt(0,size);
            }
+           if(proposants.get(entier).get(choixRandom).nouvelleDemande(this))
+           {
+               formation.add(proposants.get(entier).get(choixRandom));
+               usedNumbers.clear();
+           }
+           usedNumbers.add(choixRandom);
+
        }
-       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*20,this.bruit*20)));
+       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*length,this.bruit*length)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
        return this.listeSouhait;
@@ -162,13 +198,7 @@ public class Disposant {
         this.logic=new Comparaison(seed,this.listeSouhait);
     }
 
-    public ArrayList<Integer> getListeChoixPossible() {
-        return listeChoixPossible;
-    }
 
-    public void setListeChoixPossible(ArrayList<Integer> listeChoixPossible) {
-        this.listeChoixPossible = listeChoixPossible;
-    }
 
     public int getSeed() {
         return seed;

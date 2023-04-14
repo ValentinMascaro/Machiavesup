@@ -22,17 +22,38 @@ public class Proposant {
     protected int indiceProposition;
     protected boolean isMarie;
     protected double bruit;
-    public Proposant(int id,int seed,int capaciteMin,int capaciteMax,double bruit) {
-        this.id = id;
+    protected int demande;
+    protected int nbrDemandeRecu;
 
+
+    public Proposant(int id, int seed, int capaciteMin, int capaciteMax, double bruit, int demande, double note, int capacite) {
+        this.id = id;
         this.listeChoixPossible=new ArrayList<Integer>();
         this.indiceProposition=0;
         this.listeDossier=new ArrayList<>();
         Random rand = new Random(seed);
-        this.reputation=rand.nextGaussian();
-        this.nbrIndividu = rand.nextInt(capaciteMin,capaciteMax);
+        this.reputation=note;//rand.nextGaussian();
+        this.nbrIndividu = capacite ;//rand.nextInt(capaciteMin,capaciteMax);
         this.nbrIndividuAttente=1000;
         this.bruit = bruit;
+        this.demande=demande;
+        this.nbrDemandeRecu=0;
+    }
+    public int getDemande() {
+        return demande;
+    }
+    public boolean nouvelleDemande(Disposant etudiant)
+    {
+        if(nbrDemandeRecu+1>demande)
+        {
+            return false;
+        }
+        if(listeDossier.contains(etudiant))
+        {
+            return false;
+        }
+        listeDossier.add(etudiant);
+        return true;
     }
     public void generateAllInnerListe(int seed)
     {
