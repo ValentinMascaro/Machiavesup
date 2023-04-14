@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="csvReader TODO">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="csvReader done / repartition par bloc à tester">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csvSimuBny.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/csvSimuBny.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +118,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679654827326</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="csvReader done / repartition par bloc à tester">
+      <created>1681476702445</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1681476702445</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,6 +158,7 @@
     <MESSAGE value="setListeSouhait +pratique" />
     <MESSAGE value="Exemple manipulation playset 2" />
     <MESSAGE value="prochainEtatStable avec liste total." />
-    <option name="LAST_COMMIT_MESSAGE" value="prochainEtatStable avec liste total." />
+    <MESSAGE value="csvReader done / repartition par bloc à tester" />
+    <option name="LAST_COMMIT_MESSAGE" value="csvReader done / repartition par bloc à tester" />
   </component>
 </project>

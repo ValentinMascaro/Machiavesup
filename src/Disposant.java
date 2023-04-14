@@ -105,32 +105,53 @@ public class Disposant {
     {
         this.marie=-1;
     }
-   public List<Integer> genererListeSouhait(Map<Integer,List<Proposant>> proposants)
+   public List<Integer> genererListeSouhait(Map<Integer,List<Proposant>> proposants,ArrayList<Proposant> proposantList)
    {
        int length=proposants.size();
-        ArrayList<Proposant> formation = new ArrayList<>();
+        Set<Integer> formationSet = new HashSet<>();
         Random rand = new Random(seed);
        double moyenne = this.note;
        double ecartType = 1.5;
-       double valeur = rand.nextGaussian() * ecartType + moyenne;
        // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-       while (formation.size() < this.nbrSouhait) {
-           Set<Integer> usedNumbers = new HashSet<>();
-           int entier = Math.min(Math.max((int) Math.round(valeur), 0), 10);
-           int size=proposants.get(entier).size();
-           int choixRandom=rand.nextInt(0,size);
-           while(usedNumbers.contains(choixRandom))
-           {
-               choixRandom=rand.nextInt(0,size);
+       while (formationSet.size() < this.nbrSouhait) {
+           int valeur = (int) (rand.nextGaussian() * ecartType + moyenne); // un nombre aléatoire avec une moyenne de la note de l'étudiant
+           System.out.println("id : "+this.id+" choix bloc :"+valeur);
+           List<Proposant> blocI = new ArrayList<>(proposants.get(valeur));
+           boolean done = true;
+           while(done ) {
+               int choixRandom = rand.nextInt(0, blocI.size());
+               System.out.println(choixRandom + " dans " + valeur);
+               if (!(formationSet.contains(blocI.get(choixRandom).getId()))) {
+                   if(blocI.size()>0) {
+                       blocI.remove(choixRandom);
+                       done=true;
+                   }else{
+                       done = false;
+                   }
+                    // retire un nbr
+               } else {
+                   if (blocI.get(choixRandom).nouvelleDemande(this)) {
+                       formationSet.add(blocI.get(choixRandom).getId());
+                       done = false; // c fait
+                   }
+                 else{
+                   if (proposants.get(valeur).size() == 0) {
+                       done = false;
+                   } else {
+                       proposants.get(valeur).remove(choixRandom);
+                       done = true; // c pas fait
+                   }
+               }
            }
-           if(proposants.get(entier).get(choixRandom).nouvelleDemande(this))
-           {
-               formation.add(proposants.get(entier).get(choixRandom));
-               usedNumbers.clear();
-           }
-           usedNumbers.add(choixRandom);
 
+           }
        }
+       ArrayList<Proposant> formation = new ArrayList<>();
+       List<Integer> tmp = formationSet.stream().toList();
+        for(int i = 0 ; i<formationSet.size();i++)
+        {
+            formation.add(proposantList.get(tmp.get(i)));
+        }
        Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*length,this.bruit*length)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();

@@ -46,10 +46,12 @@ public class Proposant {
     {
         if(nbrDemandeRecu+1>demande)
         {
+
             return false;
         }
         if(listeDossier.contains(etudiant))
         {
+
             return false;
         }
         listeDossier.add(etudiant);

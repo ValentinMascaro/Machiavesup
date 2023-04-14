@@ -21,6 +21,7 @@ public class Main {
         }
         //Map<Integer,List<Double>> proposants = csv.getFormation(0,10);
         int demandeCreer=0;
+        int nbrEtudiant=0;
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
             System.out.println(entry.getKey()+" | ");
             int demande=0;
@@ -31,7 +32,8 @@ public class Main {
             demandeCreer+=demande;
             for(int i=0;i<demande/nbrdevoeuxmoyen;i++)
             {
-                Disposant disposant = new Disposant(demandeCreer+i,playset,i,0.10, entry.getKey(), 8.92);
+                Disposant disposant = new Disposant(nbrEtudiant,playset,nbrEtudiant,0.10, entry.getKey(), 8.92);
+                nbrEtudiant++;
                 disposants.get(entry.getKey()).add(disposant);
             }
             Parcoursup(proposants,disposants,15,10,disposants.size(),playset);
@@ -150,11 +152,11 @@ public class Main {
 
 
 
-    public static void init(ArrayList<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int playsetEtudiant,int playsetFormation,int seed)
+    public static void init(ArrayList<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int playsetEtudiant,int playsetFormation,int seed,ArrayList<Proposant> proposantList)
     {
         for(int i = 0 ; i<playsetEtudiant;i++)
         {
-            disposants.get(i).genererListeSouhait(proposants);
+            disposants.get(i).genererListeSouhait(proposants,proposantList);
             disposants.get(i).genererComparaison();
         }
         for(int i = 0 ; i<playsetFormation;i++)
@@ -340,10 +342,13 @@ public class Main {
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
             proposantList.addAll(entry.getValue());
         }
+        proposantList.stream().sorted((a,b)->a.getId()-b.getId());
         for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
             disposantsList.addAll(entry.getValue());
         }
-        init(disposantsList,proposants,nbrEtudiant,nbrFormation,seed);
+        disposantsList.stream().sorted((a,b)-> (int)Math.signum(b.getId()-a.getId()));
+        System.out.println(proposantList.size()+" formations "+disposantsList.size()+" étudiants");
+        init(disposantsList,proposants,nbrEtudiant,nbrFormation,seed,proposantList);
        /* disposants.get(2).setListeSouhait(new Integer[]{2,4,0,1,3});
         proposants.get(2).setListeSouhait(new Integer[]{3,4,2,6,7,1});
         disposants.get(4).setListeSouhait(new Integer[]{4,0,2,1,3});
@@ -351,6 +356,7 @@ public class Main {
         proposants.get(4).setListeSouhait(new Integer[]{5,2,6,4,1,8});*/
        for(int jour = 0; jour < nbrJour ; jour++)
        {
+           System.out.println("Jour "+jour);
         //   System.out.println("Jour : "+jour+" / "+nbrJour);
          //  System.out.println("---------------------------");
          //  printListe(proposants,disposants);
