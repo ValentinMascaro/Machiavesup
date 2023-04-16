@@ -171,7 +171,7 @@ public class Proposant {
         Random rand = new Random(seed);
         Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*nbrBloc)));
         Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
-        this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
+        this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(b.second() - a.second())).map(Pair::first).map(Disposant::getId).toList();
 
     }
     public void addDossierIndividu(Disposant disposant)

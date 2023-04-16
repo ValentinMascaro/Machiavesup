@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Parcoursup + cycle ( avec test, 0 resultat)">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Problem de répartition, trop d'étudiant">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csvSimuBny.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/csvSimuBny.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +129,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680708140135</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Problem de répartition, trop d'étudiant">
+      <created>1681670148736</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1681670148736</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -164,6 +170,7 @@
     <MESSAGE value="Exemple manipulation playset 2" />
     <MESSAGE value="prochainEtatStable avec liste total." />
     <MESSAGE value="Parcoursup + cycle ( avec test, 0 resultat)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Parcoursup + cycle ( avec test, 0 resultat)" />
+    <MESSAGE value="Problem de répartition, trop d'étudiant" />
+    <option name="LAST_COMMIT_MESSAGE" value="Problem de répartition, trop d'étudiant" />
   </component>
 </project>

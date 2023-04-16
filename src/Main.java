@@ -9,8 +9,8 @@ public class Main {
       // int seed =67;
         int seed = 1;
         for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
-            double nbrdevoeuxmoyen = 7.0;
-            int nbrbloc = 5;
+            double nbrdevoeuxmoyen = 8.0;
+            int nbrbloc = 3;
             csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv",seed);
             csv.setNbrdemande();
             int playset = csv.getNbrFormation();
@@ -35,7 +35,7 @@ public class Main {
                 // System.out.println(demande / 8 + " sur " + demandeCreer / 8);
                 //demandeCreer += demande;
                 for (int i = 0; i < demande / nbrdevoeuxmoyen; i++) {
-                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed, 0.1, entry.getKey(), 7.0, nbrbloc);
+                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed, 0.1, entry.getKey(), nbrdevoeuxmoyen-2.0, nbrbloc);
                     nbrEtudiant++;
                     disposants.get(entry.getKey()).add(disposant);
                     disposantList.add(disposant);

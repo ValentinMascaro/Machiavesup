@@ -112,14 +112,14 @@ public class Disposant {
     public int nombreAleatoireEntre(int x, int y, double z) // x min , y max, z moyenne
     {
         double moyenne = z;
-        double ecartType =2.0;
+        double ecartType =1.0;
         double valeur = this.rand.nextGaussian() * ecartType + moyenne;
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
         int entier = Math.min(Math.max((int) Math.round(valeur), x), y);
         return entier;
     }
     public <K,V> K getRandomKey(Map<K,V> map) {
-        if(map.size()>=1)
+        if(map.size()==1)
         {
             return map.keySet().iterator().next();
         }
@@ -148,13 +148,14 @@ public class Disposant {
                numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note);
                while(interdit.contains(numeroBloc))
                {
-                   System.out.println("Random key in " +propCopy);
+                  // System.out.println("Random key in " +propCopy);
+                   System.out.println(propCopy+" "+this.note+" "+this.listeSouhait+this.id);
                   numeroBloc=getRandomKey(propCopy);
                }
                gardeFou++;
                if(gardeFou>20)
                {
-                   System.out.println("Boucle "+this.id+" | "+propCopy+" note : "+this.note+" bloc choisi : "+numeroBloc);
+                   //System.out.println("Boucle "+this.id+" | "+propCopy+" note : "+this.note+" bloc choisi : "+numeroBloc);
                }
            }
            int numeroFormation = rand.nextInt(0,propCopy.get(numeroBloc).size());
@@ -174,7 +175,7 @@ public class Disposant {
        }
        Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*this.nbrBloc)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
-       this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
+       this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(b.second() - a.second())).map(Pair::first).map(Proposant::getId).toList();
    }
     public ArrayList<Integer> genererListeSouhait( ) {
         ArrayList<Integer> numbers = new ArrayList<>();
