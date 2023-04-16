@@ -12,18 +12,22 @@ public class csvSimuBny {
     private List<Integer> note;
     private String csvFile;
     private int nbrFormation;
+    private Map<Integer,List<Proposant>> formation;
+    private List<Proposant> formationList;
+    protected int seed;
 
     public int getNbrFormation() {
         return nbrFormation;
     }
 
-    public csvSimuBny(String cheminFichier)
+    public csvSimuBny(String cheminFichier,int seed)
     {
+        this.seed=seed;
         this.csvFile="src/"+cheminFichier;
         this.nbrdemande=new ArrayList<>();
         this.note = new ArrayList<>();
     }
-    public Map<Integer,List<Proposant>> getFormation(int seed,int nbrBloc)
+    public void setFormation(int nbrBloc)
     {
        // List<Proposant> proposants=new ArrayList<>();
         List<Double> noteFormation = this.getReputation();
@@ -33,10 +37,11 @@ public class csvSimuBny {
         double max = noteFormation.stream().mapToDouble(d -> d).max().orElse(Double.NEGATIVE_INFINITY);
         double min = Collections.min(noteFormation);
        // Map<Integer,List<Double>> proposants = new HashMap<>();
-        Map<Integer,List<Proposant>> proposants=new HashMap<>();
+        this.formation=new HashMap<>();
+        this.formationList=new ArrayList<>();
         for(int i =0;i<nbrBloc+1;i++)
         {
-            proposants.put( i,new ArrayList<>());
+            formation.put( i,new ArrayList<>());
         }
         for(int i =0;i<demandeFormation.size();i++)
         {
@@ -50,11 +55,12 @@ public class csvSimuBny {
                 key =(int) Math.round(note / 2.0) * 2;
             }*/
             int key = (int) note;
-            System.out.println(i+" | "+note+" | "+key);
+           // System.out.println(i+" | "+note+" | "+key);
             //proposants.get(key).add(note);
-            proposants.get(key).add(new Proposant(i,seed+i,0,0,0.10,demandeFormation.get(i),note,capaciteFormation.get(i)));
+            Proposant prop = new Proposant(i,seed+i,0,0,0.10,demandeFormation.get(i),note,capaciteFormation.get(i),nbrBloc);
+            formation.get(key).add(prop);
+            formationList.add(prop);
         }
-        return proposants;
     }
     public List<Double> getReputation()
     {
@@ -286,5 +292,13 @@ public class csvSimuBny {
 
     public List<Integer> getNbrdemande() {
         return nbrdemande;
+    }
+
+    public Map<Integer, List<Proposant>> getFormation() {
+        return formation;
+    }
+
+    public List<Proposant> getFormationList() {
+        return formationList;
     }
 }

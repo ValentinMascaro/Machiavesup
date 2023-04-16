@@ -3,6 +3,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class Disposant {
+    Random rand;
     protected Comparaison logic;
     protected int id;
     protected int nbrSouhait;
@@ -17,6 +18,8 @@ public class Disposant {
     protected double note;
     protected double bruit;
     protected int bloc;
+    private double nbrBloc;
+
     public int getPlayset() {
         return playset;
     }
@@ -33,13 +36,14 @@ public class Disposant {
         return listeRefus;
     }
 
-    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux){
+    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux,double nbrBloc){
+        this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
         this.listeAccepte=new ArrayList<>();
         this.listeAttente=new ArrayList<>();
         this.listeRefus=new ArrayList<>();
-        Random rand = new Random(seed);
+        this.rand = new Random(seed);
         this.playset=playset;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         double moyenne =moyenneNbrVoeux;
@@ -105,61 +109,72 @@ public class Disposant {
     {
         this.marie=-1;
     }
-   public List<Integer> genererListeSouhait(Map<Integer,List<Proposant>> proposants,ArrayList<Proposant> proposantList)
+    public int nombreAleatoireEntre(int x, int y, double z) // x min , y max, z moyenne
+    {
+        double moyenne = z;
+        double ecartType =2.0;
+        double valeur = this.rand.nextGaussian() * ecartType + moyenne;
+        // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
+        int entier = Math.min(Math.max((int) Math.round(valeur), x), y);
+        return entier;
+    }
+    public <K,V> K getRandomKey(Map<K,V> map) {
+        if(map.size()>=1)
+        {
+            return map.keySet().iterator().next();
+        }
+        K[] keys = map.keySet().toArray((K[]) new Object[map.size()]);
+        return keys[this.rand.nextInt(keys.length)];
+    }
+   public void genererListeSouhait(Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList)
    {
-       System.out.println("Nbr souhait :"+this.nbrSouhait);
-       int length=proposants.size();
-        Set<Integer> formationSet = new HashSet<>();
-        Random rand = new Random(seed);
-       double moyenne = this.note;
-       double ecartType = 1.5;
-       // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-       while (formationSet.size() < this.nbrSouhait) {
-           double valeurReel =  (rand.nextGaussian() * ecartType + moyenne); // un nombre aléatoire avec une moyenne de la note de l'étudiant
-           int valeur = Math.min(Math.max((int) Math.round(valeurReel), 0), proposants.size());
-           System.out.println("id : "+this.id+" choix bloc :"+valeur);
-           List<Proposant> blocI = new ArrayList<>(proposants.get(valeur));
-           while(true) { // sortie avec un break
-               if(blocI.size()==0)
+       Set<Integer> interdit = new HashSet<>();
+       List<Proposant> formation = new ArrayList<>();
+       Map<Integer,List<Proposant>> propCopy = new HashMap<>();
+       for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
+           Integer key = entry.getKey();
+           List<Proposant> value = new ArrayList<>(entry.getValue()); // on clone la liste
+           propCopy.put(key, value);
+       }
+       this.listeSouhait=new ArrayList<>();
+       while(this.listeSouhait.size()<this.nbrSouhait)
+       {
+           int gardeFou=0;
+           int numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note-0.5);
+         //  System.out.println("bloc n : "+numeroBloc+" note : "+this.note+hashSouhait);
+           while(propCopy.get(numeroBloc)==null ||propCopy.get(numeroBloc).size()==0) {
+               propCopy.remove(numeroBloc);
+               interdit.add(numeroBloc);
+               numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note);
+               while(interdit.contains(numeroBloc))
                {
-                   proposants.remove(valeur);
-                   if(proposants.size()==0)
-                   {
-                       nbrSouhait= formationSet.size();
-                       break;
-                   }
-                   break;
+                   System.out.println("Random key in " +propCopy);
+                  numeroBloc=getRandomKey(propCopy);
                }
-               int choixRandom = rand.nextInt(0, blocI.size());
-               System.out.println(choixRandom + " dans " + valeur);
-               if ((formationSet.contains(blocI.get(choixRandom).getId()))) {
-                       blocI.remove(choixRandom);
-                       break;
-                   }
-                    // retire un nbr
-                else {
-                   if (blocI.get(choixRandom).nouvelleDemande(this)) {
-                       System.out.println("SOuhaute : "+blocI.get(choixRandom).getId());
-                       formationSet.add(blocI.get(choixRandom).getId());
-                      break;
-                   }
-                    else{
-                   proposants.get(valeur).remove(choixRandom);
-                   blocI.remove(choixRandom);
+               gardeFou++;
+               if(gardeFou>20)
+               {
+                   System.out.println("Boucle "+this.id+" | "+propCopy+" note : "+this.note+" bloc choisi : "+numeroBloc);
                }
            }
+           int numeroFormation = rand.nextInt(0,propCopy.get(numeroBloc).size());
+
+           if(propCopy.get(numeroBloc).get(numeroFormation).nouvelleDemande(this))
+           {
+           this.listeSouhait.add(propCopy.get(numeroBloc).get(numeroFormation).getId());
+           formation.add(proposantList.get(propCopy.get(numeroBloc).get(numeroFormation).getId()));
+           propCopy.get(numeroBloc).remove(numeroFormation);
+           }
+           else
+           {
+              // System.out.println("Else "+this.id+" | "+propCopy+" note : "+this.note+" bloc choisi : "+numeroBloc);
+               proposants.get(numeroBloc).remove(propCopy.get(numeroBloc).get(numeroFormation));
+               propCopy.get(numeroBloc).remove(numeroFormation);
            }
        }
-       ArrayList<Proposant> formation = new ArrayList<>();
-       List<Integer> tmp = formationSet.stream().toList();
-        for(int i = 0 ; i<formationSet.size();i++)
-        {
-            formation.add(proposantList.get(tmp.get(i)));
-        }
-       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*length,this.bruit*length)));
+       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*this.nbrBloc)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
-       return this.listeSouhait;
    }
     public ArrayList<Integer> genererListeSouhait( ) {
         ArrayList<Integer> numbers = new ArrayList<>();

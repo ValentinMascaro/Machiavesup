@@ -7,37 +7,51 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
       // int seed =67;
-    int nbrdevoeuxmoyen = 8;
-        csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv");
-        csv.setNbrdemande();
-        int playset = csv.getNbrFormation();
-        //System.out.println(csv.getNbrProposition());
-        //System.out.println(csv.getReputation().stream().sorted().toList()); // 1 = très bien
-        Map<Integer,List<Proposant>> proposants = csv.getFormation(0,10);
-        Map<Integer,List<Disposant>> disposants = new HashMap<>();
-        for(int i =0;i<11;i++)
-        {
-            disposants.put(i,new ArrayList<>());
-        }
-        //Map<Integer,List<Double>> proposants = csv.getFormation(0,10);
-        int demandeCreer=0;
-        int nbrEtudiant=0;
-        for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
-            System.out.println(entry.getKey()+" | ");
-            int demande=0;
-            for(int i =0;i<entry.getValue().size();i++) {
-                demande+=entry.getValue().get(i).getDemande();
+        int seed = 1;
+        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
+            double nbrdevoeuxmoyen = 7.0;
+            int nbrbloc = 5;
+            csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv",seed);
+            csv.setNbrdemande();
+            int playset = csv.getNbrFormation();
+            //System.out.println(csv.getNbrProposition());
+            //System.out.println(csv.getReputation().stream().sorted().toList()); // 1 = très bien
+            csv.setFormation(nbrbloc);
+            Map<Integer, List<Proposant>> proposants = csv.getFormation();
+            List<Proposant> proposantList = csv.getFormationList();
+            Map<Integer, List<Disposant>> disposants = new HashMap<>();
+            List<Disposant> disposantList = new ArrayList<>();
+            for (int i = 0; i < nbrbloc + 1; i++) {
+                disposants.put(i, new ArrayList<>());
             }
-            System.out.println(demande/8+" sur "+demandeCreer/8);
-            demandeCreer+=demande;
-            for(int i=0;i<demande/nbrdevoeuxmoyen;i++)
-            {
-                Disposant disposant = new Disposant(nbrEtudiant,playset,nbrEtudiant,0.10, entry.getKey(), 8.92);
-                nbrEtudiant++;
-                disposants.get(entry.getKey()).add(disposant);
+            // int demandeCreer=0;
+            int nbrEtudiant = 0;
+            for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
+                System.out.println(entry.getKey() + " | ");
+                int demande = 0;
+                for (int i = 0; i < entry.getValue().size(); i++) {
+                    demande += entry.getValue().get(i).getDemande();
+                }
+                // System.out.println(demande / 8 + " sur " + demandeCreer / 8);
+                //demandeCreer += demande;
+                for (int i = 0; i < demande / nbrdevoeuxmoyen; i++) {
+                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed, 0.1, entry.getKey(), 7.0, nbrbloc);
+                    nbrEtudiant++;
+                    disposants.get(entry.getKey()).add(disposant);
+                    disposantList.add(disposant);
+                }
             }
-            Parcoursup(proposants,disposants,15,10,disposants.size(),playset);
+            System.out.println("Nbr formation :" + proposantList.size());
+            System.out.println("Nbr etudiant : " + disposantList.size());
+            Parcoursup(proposants, disposants, 15, 0, disposantList, proposantList);
+            System.out.println("Seed :" + seed + "Nb cycle : " + searchCycle(disposantList, proposantList));
+            seed++;
         }
+        System.out.println("fin");
+       /* System.out.println(proposants.get(0));
+        disposantList.get(0).genererListeSouhait(proposants,proposantList);
+        System.out.println(proposants.get(0));
+        System.out.println(disposantList.get(0).getListeSouhait());*/
     }
     public static void test(){
         int nbrEtudiant=200;
@@ -66,7 +80,7 @@ public class Main {
                 for (int j = 0; j < disposants.size(); j++) {
                     if (disposants.get(j).getMarie() != -1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie()) != 0) {
                         //   System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
-                        Couple dispoPropo = prochainEtat(disposants, proposants, j, seed);
+                        Couple dispoPropo = prochainEtat(disposants, proposants, j);
                         if (dispoPropo.getDisposant() == j) {
                             nbrCycle++;
                             //System.out.println(seed);
@@ -84,7 +98,24 @@ public class Main {
             System.out.println("FIN");
         }
     }
-    public static Couple prochainEtat(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int disposantCible,int seed)
+    public static int searchCycle(List<Disposant> disposants,List<Proposant> proposants){
+        int nbrCycle=0;
+        for (int j = 0; j < disposants.size(); j++) {
+            if (disposants.get(j).getMarie() != -1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie()) != 0) {
+                //System.out.println(j);
+                //   System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
+                Couple dispoPropo = prochainEtat(disposants, proposants, j);
+                if (dispoPropo.getDisposant() == j) {
+                    nbrCycle++;
+                    //System.out.println(seed);
+                   // listSeed.add(seed);
+                    //System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
+                }
+            }
+        }
+        return nbrCycle;
+    }
+    public static Couple prochainEtat(List<Disposant> disposants,List<Proposant> proposants,int disposantCible)
     {
        //ArrayList<Couple> listeMariage = new ArrayList<>();
         Map<Integer,Integer> listeMariage = new HashMap<Integer,Integer>(disposants.size());
@@ -120,7 +151,7 @@ public class Main {
         }
         return new Couple(tmp.getDisposant(),MarieLibere);
     }
-    public static Couple libereProposant(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int libere, Map<Integer,Integer> mariagePossible) // return le prochain marie liberer par quel disposant
+    public static Couple libereProposant(List<Disposant> disposants,List<Proposant> proposants,int libere, Map<Integer,Integer> mariagePossible) // return le prochain marie liberer par quel disposant
     {
         Proposant proposantLibere = proposants.get(libere);
         int prochainDisposant=proposantLibere.getProchainListeAttente();
@@ -135,7 +166,7 @@ public class Main {
           // System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
         while(prochainLiberer==libere && prochainDisposant!=-1)
         {
-            System.out.println(prochainDisposant+" refuse");
+           // System.out.println(prochainDisposant+" refuse");
             etape++;
             prochainDisposant=proposantLibere.getProchainListeAttente(etape);
             //System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
@@ -152,21 +183,17 @@ public class Main {
 
 
 
-    public static void init(ArrayList<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int playsetEtudiant,int playsetFormation,int seed,ArrayList<Proposant> proposantList)
+    public static void init(List<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int seed,List<Proposant> proposantList)
     {
-        for(int i = 0 ; i<playsetEtudiant;i++)
+        for(int i = 0 ; i<disposants.size();i++)
         {
             disposants.get(i).genererListeSouhait(proposants,proposantList);
             disposants.get(i).genererComparaison();
         }
-        for(int i = 0 ; i<playsetFormation;i++)
+        for(int i = 0 ; i<proposantList.size();i++)
         {
-            List<Proposant> prop = proposants.get(i);
-            for(int j = 0 ; j < prop.size();j++)
-            {
-                prop.get(j).generateAllInnerListe(seed);
-                seed++;
-            }
+            proposantList.get(i).generateAllInnerListe(seed);
+            seed++;
         }
     }
     /*public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playsetEtudiant,int playsetFormation,int seed,int capaciteMin,int capaciteMax,double bruitEtudiant,double bruitFormation)
@@ -197,7 +224,7 @@ public class Main {
             seed++;
         }
     }*/
-    public static void printListe(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
+    public static void printListe(List<Proposant> proposant,List<Disposant> disposant)
     {
         System.out.println("Disposant");
         for(Disposant e : disposant)
@@ -226,7 +253,7 @@ public class Main {
             System.out.println("Refus : "+refus);
         }
     }
-    public static void printListeFormation(ArrayList<Proposant> proposant)
+    public static void printListeFormation(List<Proposant> proposant)
     {
         System.out.println("Proposant");
         for(Proposant p : proposant)
@@ -242,7 +269,7 @@ public class Main {
             System.out.println("Refus : "+refus);
         }
     }
-    public static void printListeMini(ArrayList<Proposant> proposant,ArrayList<Disposant> disposant)
+    public static void printListeMini(List<Proposant> proposant,List<Disposant> disposant)
     {
         System.out.println("Disposant");
         for(Disposant e : disposant)
@@ -265,7 +292,30 @@ public class Main {
             System.out.println(" Souhait : "+souhait+ " "+ accepte );
         }
     }
-    public static void Appel(ArrayList<Proposant> proposants,ArrayList<Disposant> disposants)
+    public static void printListeMiniInt(List<Proposant> proposant,List<Disposant> disposant)
+    {
+        System.out.println("Disposant");
+        /*for(Disposant e : disposant)
+        {
+            List<Integer> souhait = e.getListeSouhait();
+            List<Integer> accepte = e.getListeAccepte();
+            List<Integer> attente = e.getListeAttente();
+            List<Integer> refus = e.getListeRefus();
+            System.out.print("Etudiant : "+e.getId()+ " "+ e.getMarie());
+            System.out.println(" Souhait : "+souhait);
+        }*/
+        System.out.println("Proposant");
+        for(Proposant p : proposant)
+        {
+            List<Integer> souhait = p.getListeSouhait();
+            List<Integer> accepte = p.getListeAcceptation();
+            List<Integer> attente = p.getListeAttente();
+            List<Integer> refus = p.getListeRefus();
+            System.out.print("Formation : "+p.getId()+" "+ p.getNbrIndividu()+" places et "+souhait.size()+" demandes /"+p.demande);
+            System.out.println(" Souhait : "+souhait+ " "+ accepte );
+        }
+    }
+    public static void Appel(List<Proposant> proposants,List<Disposant> disposants)
     {
 
         for(int i = 0 ; i < proposants.size();i++)
@@ -287,7 +337,7 @@ public class Main {
             }
         }
     }
-    public static void Reponse(Strategie strategie,ArrayList<Proposant> proposants,ArrayList<Disposant> disposants)
+    public static void Reponse(Strategie strategie,List<Proposant> proposants,List<Disposant> disposants)
     {
         applicationStrategie(strategie,disposants);
         for(Disposant e : disposants)
@@ -333,30 +383,14 @@ public class Main {
             }
         }
     }
-    public static void Parcoursup(Map<Integer,List<Proposant>> proposants,Map<Integer,List<Disposant>> disposants,int nbrJour,int seed,int nbrEtudiant,int nbrFormation)
+    public static void Parcoursup(Map<Integer,List<Proposant>> proposants,Map<Integer,List<Disposant>> disposants,int nbrJour,int seed,List<Disposant> disposantsList,List<Proposant> proposantList)
     {
         Strategie strategie = new StrategieDefault();
-
-        ArrayList<Proposant> proposantList = new ArrayList<>();
-        ArrayList<Disposant> disposantsList = new ArrayList<>();
-        for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
-            proposantList.addAll(entry.getValue());
-        }
-        proposantList.stream().sorted((a,b)->a.getId()-b.getId());
-        for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
-            disposantsList.addAll(entry.getValue());
-        }
-        disposantsList.stream().sorted((a,b)-> (int)Math.signum(b.getId()-a.getId()));
-        System.out.println(proposantList.size()+" formations "+disposantsList.size()+" étudiants");
-        init(disposantsList,proposants,nbrEtudiant,nbrFormation,seed,proposantList);
-       /* disposants.get(2).setListeSouhait(new Integer[]{2,4,0,1,3});
-        proposants.get(2).setListeSouhait(new Integer[]{3,4,2,6,7,1});
-        disposants.get(4).setListeSouhait(new Integer[]{4,0,2,1,3});
-        proposants.get(0).setListeSouhait(new Integer[]{9,5,2,0,6,4,7,1});
-        proposants.get(4).setListeSouhait(new Integer[]{5,2,6,4,1,8});*/
+        init(disposantsList,proposants,seed,proposantList);
+        //printListeMiniInt(proposantList,disposantsList);
        for(int jour = 0; jour < nbrJour ; jour++)
        {
-           System.out.println("Jour "+jour);
+          // System.out.println("Jour "+jour);
         //   System.out.println("Jour : "+jour+" / "+nbrJour);
          //  System.out.println("---------------------------");
          //  printListe(proposants,disposants);
@@ -365,6 +399,6 @@ public class Main {
            Reponse(strategie,proposantList,disposantsList);
          //  printListe(proposants,disposants);
        }
-       printListeMini(proposantList,disposantsList);
+       printListeMiniInt(proposantList.subList(136,137),disposantsList);
     }
 }
