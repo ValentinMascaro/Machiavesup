@@ -8,9 +8,9 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed = 1;
-        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
+        for(int nbrTest = 0 ; nbrTest<1;nbrTest++) {
             double nbrdevoeuxmoyen = 8.0;
-            int nbrbloc = 3;
+            int nbrbloc = 5;
             csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv",seed);
             csv.setNbrdemande();
             int playset = csv.getNbrFormation();
@@ -32,19 +32,54 @@ public class Main {
                 for (int i = 0; i < entry.getValue().size(); i++) {
                     demande += entry.getValue().get(i).getDemande();
                 }
+                System.out.println(demande);
                 // System.out.println(demande / 8 + " sur " + demandeCreer / 8);
                 //demandeCreer += demande;
-                for (int i = 0; i < demande / nbrdevoeuxmoyen; i++) {
-                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed, 0.1, entry.getKey(), nbrdevoeuxmoyen-2.0, nbrbloc);
+                for (int i = 0; i < (demande / nbrdevoeuxmoyen)-1; i++) {
+                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant, 0.2, entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
                     nbrEtudiant++;
                     disposants.get(entry.getKey()).add(disposant);
                     disposantList.add(disposant);
                 }
             }
+           // System.out.println(" "+disposants.get(0).size()+" "+disposants.get(1).size()+" "+disposants.get(2).size()+" "+disposants.get(3).size());
+
             System.out.println("Nbr formation :" + proposantList.size());
             System.out.println("Nbr etudiant : " + disposantList.size());
-            Parcoursup(proposants, disposants, 15, 0, disposantList, proposantList);
-            System.out.println("Seed :" + seed + "Nb cycle : " + searchCycle(disposantList, proposantList));
+            int totalDemande=0;
+            for(int i =0;i<csv.getNbrdemande().size();i++) {
+                totalDemande+=csv.getNbrdemande().get(i);
+            }
+            System.out.println("Total demande = "+totalDemande);
+            System.out.println(proposants);
+            System.out.println("Nbr étudiant groupe 0 :"+disposants.get(0).size());
+
+            for(Disposant d:disposantList)
+            {
+                d.genererListeSouhait(proposants,proposantList);
+                System.out.println("---------");
+                printListeMiniInt(proposantList,disposantList);
+            }
+            System.out.println(proposants);
+            int sommeD=0;
+            for(Proposant p : proposantList)
+            {
+                sommeD+=p.nbrDemandeRecu;
+            }
+            for(Disposant d : disposantList.subList(disposantList.size()-100,disposantList.size()))
+            {
+                System.out.println(d.listeSouhait+" "+d.nbrSouhait);
+            }
+            int moySOuhait=0;
+            for(Disposant d : disposantList)
+            {
+                moySOuhait+=d.nbrSouhait;
+            }
+            System.out.println("Moyenne "+moySOuhait/disposantList.size());
+            System.out.println("Total demande reçu :"+sommeD);
+            printListeMiniInt(proposantList,disposantList);
+           // Parcoursup(proposants, disposants, 15, 0, disposantList, proposantList);
+            //System.out.println("Seed :" + seed + "Nb cycle : " + searchCycle(disposantList, proposantList));
             seed++;
         }
         System.out.println("fin");
@@ -311,7 +346,11 @@ public class Main {
             List<Integer> accepte = p.getListeAcceptation();
             List<Integer> attente = p.getListeAttente();
             List<Integer> refus = p.getListeRefus();
-            System.out.print("Formation : "+p.getId()+" "+ p.getNbrIndividu()+" places et "+souhait.size()+" demandes /"+p.demande);
+            if(souhait!=null) {
+                System.out.print("Formation : " + p.getId() + " Reputation : "+p.getReputation()+" | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+            }else{
+                System.out.print("Formation : " + p.getId() + " Reputation : "+p.getReputation()+" | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+            }
             System.out.println(" Souhait : "+souhait+ " "+ accepte );
         }
     }
