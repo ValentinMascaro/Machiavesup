@@ -8,7 +8,8 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed = 1;
-        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
+        double bruit = 0.10;
+        for(int nbrTest = 0 ; nbrTest<1;nbrTest++) {
             System.out.println("Seed pour ce test : "+seed);
             double nbrdevoeuxmoyen =8.5; // 3 70 113 116 67 66 114 87
             int nbrbloc = 10; //36488
@@ -34,18 +35,13 @@ public class Main {
                 for (int i = 0; i < entry.getValue().size(); i++) {
                     demande += entry.getValue().get(i).getDemande();
                 }
-              //  System.out.println(demande);
-                // System.out.println(demande / 8 + " sur " + demandeCreer / 8);
-                //demandeCreer += demande;
                 for (int i = 0; i < Math.round(demande / nbrdevoeuxmoyen); i++) {
-                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant, 0.01, entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
+                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant,  entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
                     nbrEtudiant++;
                     disposants.get(entry.getKey()).add(disposant);
                     disposantList.add(disposant);
                 }
-            }
-           // System.out.println(" "+disposants.get(0).size()+" "+disposants.get(1).size()+" "+disposants.get(2).size()+" "+disposants.get(3).size());
-
+            }// [6, 42, 17, 105, 112, 87][] [4487, 591, 1131, 550, 3930, 14338, 5206, 7489, 7652, 3947, 14980, 1840, 3753, 97, 1291, 5831, 6061, 3955, 2381, 6567, 1670, 1330
             System.out.println("Nbr formation :" + proposantList.size());
             System.out.println("Nbr etudiant : " + disposantList.size());
             int totalDemande=0;
@@ -60,46 +56,56 @@ public class Main {
                 List<Proposant> value = new ArrayList<>(entry.getValue()); // on clone la liste
                 propCopy.put(key, value);
             }
-           // Collections.shuffle(disposantList);
-            for(Disposant d:disposantList)
-            {
-                d.genererListeSouhait(propCopy,proposantList);
-            }
-            System.out.println(proposants);
-            int sommeD=0;
-            for(Proposant p : proposantList)
-            {
-                sommeD+=p.nbrDemandeRecu;
-            }
-           /* for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
-                if(entry.getValue().size()>10) {
+            init(disposantList,proposants,proposantList,bruit);
+            Parcoursup(propCopy,disposants,15,seed,disposantList,proposantList);
+
+            for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
+                if (entry.getValue().size() > 10) {
                     for (Disposant d : entry.getValue().subList(0, 10)) {//entry.getValue().subList(entry.getValue().size() - 10, entry.getValue().size())) {
-                        System.out.println(d.listeSouhait + " " + d.nbrSouhait + " bloc :" + d.bloc+ " seed :"+d.getSeed());
+                        System.out.println("Note : "+d.getNote()+"Etudiant id : "+d.getId()+d.listeSouhait+d.listeAccepte);
                     }
                 }
-            }*/
-            double moySOuhait=0.0;
-            double moyObtenu=0.0;
-            for(Disposant d : disposantList)
-            {
-                moySOuhait+=d.getNbrSouhait();
-                moyObtenu+=d.getListeSouhait().size();
             }
-            System.out.println("Moyenne souhaité "+moySOuhait/disposantList.size());
-            System.out.println("Moyenne obtenu "+moyObtenu/disposantList.size());
-            System.out.println("Total demande reçu :"+sommeD+" / "+totalDemande);
-            printListeFormationByReputation(proposants,false);
-           // Parcoursup(proposants, disposants, 15, 0, disposantList, proposantList);
-            //System.out.println("Seed :" + seed + "Nb cycle : " + searchCycle(disposantList, proposantList));
+            printListeFormationByReputation(proposantList.subList(80,100),true);
             seed++;
+            System.out.println("Nb cycle : "+searchCycle(disposantList,proposantList));
+            System.out.println("Etudiant 2 "+disposantList.get(2).getMarie());
         }
         System.out.println("fin");
-       /* System.out.println(proposants.get(0));
-        disposantList.get(0).genererListeSouhait(proposants,proposantList);
-        System.out.println(proposants.get(0));
-        System.out.println(disposantList.get(0).getListeSouhait());*/
     }
+    private static void printListeFormationByReputation(List<Proposant> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
 
+            for(Proposant p : proposants)
+            {
+                List<Integer> souhait = p.getListeSouhait();
+                List<Integer> accepte = p.getListeAcceptation();
+                List<Integer> attente = p.getListeAttente();
+                List<Integer> refus = p.getListeRefus();
+                if(allOrNo) {
+                    if (p.nbrDemandeRecu < p.getDemande()) {
+                        System.out.print("\033[31m");
+                    }
+                    if (souhait != null) {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    } else {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    }
+                    System.out.println(" Souhait : " + souhait + " " + accepte + "\033[0m");
+                }
+                else{if(p.nbrDemandeRecu<p.getDemande()) {
+                    System.out.print("\033[31m");
+                    if (souhait != null) {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    } else {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    }
+                    System.out.println(" Souhait : " + souhait + " " + accepte + "\033[0m");
+                }
+                }
+
+
+        }
+    }
     private static void printListeFormationByReputation(Map<Integer, List<Proposant>> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
             List<Proposant> list = entry.getValue();
@@ -135,51 +141,7 @@ public class Main {
         }
     }
 
-    public static void test(){
-        int nbrEtudiant=200;
-        int nbrFormation=20;
-        int capaciteMin=5;
-        int capaciteMax=20;
-        int nbrCycle=0;
-        int nbrTest=1;
-        double bruitEtudiant=0.10;
-        double bruitFormation=0.10;
-        int nbrTestBruit=10;
-        ArrayList<Disposant> disposants=new ArrayList<>();
-        ArrayList<Proposant> proposants=new ArrayList<>();
-        for(int b = 0;b<nbrTestBruit;b++) {
-            int seed=43;
-            bruitFormation+=0.10;
-            nbrCycle=0;
-            List<Integer> listSeed = new ArrayList<>();
-            for (int i = 0; i < nbrTest; i++) {
-                disposants = new ArrayList<>();
-                proposants = new ArrayList<>();
-             //deprecated   Parcoursup(proposants, disposants, 15, seed, nbrEtudiant, nbrFormation, capaciteMin, capaciteMax, bruitEtudiant, bruitFormation);
-                //printListeFormation(proposants);
-                //  printListeMini(proposants, disposants);
-                //  printListe(proposants,disposants);
-                for (int j = 0; j < disposants.size(); j++) {
-                    if (disposants.get(j).getMarie() != -1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie()) != 0) {
-                        //   System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
-                        Couple dispoPropo = prochainEtat(disposants, proposants, j);
-                        if (dispoPropo.getDisposant() == j) {
-                            nbrCycle++;
-                            //System.out.println(seed);
-                            listSeed.add(seed);
-                            //System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
-                        }
-                    }
-                }
-                seed++;
-            }
-            // printListeMini(proposants,disposants);
-            System.out.println("BruitEtudiant : " + bruitEtudiant + "\nBruitFormation : " + bruitFormation);
-            System.out.println(nbrCycle + " cycle trouvée sur " + nbrEtudiant + " avec " + nbrFormation + "formation pour " + nbrTest + " test");
-            System.out.println(listSeed);
-            System.out.println("FIN");
-        }
-    }
+
     public static int searchCycle(List<Disposant> disposants,List<Proposant> proposants){
         int nbrCycle=0;
         for (int j = 0; j < disposants.size(); j++) {
@@ -265,47 +227,19 @@ public class Main {
 
 
 
-    public static void init(List<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int seed,List<Proposant> proposantList)
+    public static void init(List<Disposant> disposants,Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList,double bruit)
     {
         for(int i = 0 ; i<disposants.size();i++)
         {
-            disposants.get(i).genererListeSouhait(proposants,proposantList) ;
+            disposants.get(i).genererListeSouhait(proposants,proposantList,bruit) ;
             disposants.get(i).genererComparaison();
         }
         for(int i = 0 ; i<proposantList.size();i++)
         {
-            proposantList.get(i).generateAllInnerListe(seed);
-            seed++;
+            proposantList.get(i).generateAllInnerListe(bruit);
         }
     }
-    /*public static void init(ArrayList<Disposant> disposants,ArrayList<Proposant> proposants,int playsetEtudiant,int playsetFormation,int seed,int capaciteMin,int capaciteMax,double bruitEtudiant,double bruitFormation)
-    {
-        for(int i =0;i<playsetFormation;i++)
-        {
-            Proposant proposant=new Proposant(i,seed,capaciteMin,capaciteMax,bruitFormation,100,100,100); // deprecated
-            proposants.add(proposant);
-            seed++;
-        }
-        for(int i = 0 ; i<playsetEtudiant;i++)
-        {
-            Disposant disposant = new Disposant(i,playsetFormation,seed,bruitEtudiant);
-            disposant.genererListeSouhait(proposants);
-            disposant.genererComparaison();
-            List<Integer> res = disposant.getListeSouhait();
-            for(int j = 0; j <res.size();j++)
-            {
-                proposants.get(res.get(j)).addDossierIndividu(disposant);
-            }
-            seed++;
-            disposants.add(disposant);
-        }
 
-        for(int i = 0 ; i<playsetFormation;i++)
-        {
-            proposants.get(i).generateAllInnerListe(seed);
-            seed++;
-        }
-    }*/
     public static void printListe(List<Proposant> proposant,List<Disposant> disposant)
     {
         System.out.println("Disposant");
@@ -472,7 +406,7 @@ public class Main {
     public static void Parcoursup(Map<Integer,List<Proposant>> proposants,Map<Integer,List<Disposant>> disposants,int nbrJour,int seed,List<Disposant> disposantsList,List<Proposant> proposantList)
     {
         Strategie strategie = new StrategieDefault();
-        init(disposantsList,proposants,seed,proposantList);
+      //  init(disposantsList,proposants,proposantList,bruit);
         //printListeMiniInt(proposantList,disposantsList);
        for(int jour = 0; jour < nbrJour ; jour++)
        {
@@ -485,6 +419,5 @@ public class Main {
            Reponse(strategie,proposantList,disposantsList);
          //  printListe(proposants,disposants);
        }
-       printListeMiniInt(proposantList.subList(136,137),disposantsList);
     }
 }

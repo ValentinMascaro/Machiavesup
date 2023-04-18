@@ -57,7 +57,7 @@ public class csvSimuBny {
             int key = (int) note;
            // System.out.println(i+" | "+note+" | "+key);
             //proposants.get(key).add(note);
-            Proposant prop = new Proposant(i,seed+i,0,0,0.10,demandeFormation.get(i),note,capaciteFormation.get(i),nbrBloc);
+            Proposant prop = new Proposant(i,seed+i,demandeFormation.get(i),note,capaciteFormation.get(i),nbrBloc);
             formation.get(key).add(prop);
             formationList.add(prop);
         }

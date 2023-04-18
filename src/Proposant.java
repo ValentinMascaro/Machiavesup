@@ -21,23 +21,21 @@ public class Proposant {
 
     protected int indiceProposition;
     protected boolean isMarie;
-    protected double bruit;
     protected int demande;
     protected int nbrDemandeRecu;
     private double nbrBloc;
+    private Random rand;
 
-
-    public Proposant(int id, int seed, int capaciteMin, int capaciteMax, double bruit, int demande, double note, int capacite,double nbrBloc) {
+    public Proposant(int id, int seed, int demande, double note, int capacite,double nbrBloc) {
         this.nbrBloc=nbrBloc;
         this.id = id;
         this.listeChoixPossible=new ArrayList<Integer>();
         this.indiceProposition=0;
         this.listeDossier=new ArrayList<>();
-        Random rand = new Random(seed);
+        this.rand = new Random(seed);
         this.reputation=note;//rand.nextGaussian();
         this.nbrIndividu = capacite ;//rand.nextInt(capaciteMin,capaciteMax);
         this.nbrIndividuAttente=1000;
-        this.bruit = bruit;
         this.demande=demande;
         this.nbrDemandeRecu=0;
     }
@@ -58,12 +56,12 @@ public class Proposant {
             return false;
         }
         this.nbrDemandeRecu++;
-        listeDossier.add(etudiant);
+        this.addDossierIndividu(etudiant);
         return true;
     }
-    public void generateAllInnerListe(int seed)
+    public void generateAllInnerListe(double bruit)
     {
-        this.generateListePreference(seed);
+        this.generateListePreference(bruit);
         this.generateListeAcceptation();
         this.generateListeAttente();
         this.generateListeRefus(); // pas encore implementé
@@ -168,22 +166,16 @@ public class Proposant {
         isMarie=false;
         this.indiceProposition++;
     }
-    public void generateListePreference(int seed) {
-        Random rand = new Random(seed);
-        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*nbrBloc)));
+    public void generateListePreference(double bruit) {
+
+        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+this.rand.nextDouble(-bruit*this.nbrBloc,bruit*nbrBloc)));
         Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
-        this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(b.second() - a.second())).map(Pair::first).map(Disposant::getId).toList();
+        this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
 
     }
     public void addDossierIndividu(Disposant disposant)
     {
         this.listeDossier.add(disposant);
-    }
-    public void generateListePreference(int seed, int deprecated) {
-        ArrayList<Integer> pref = new ArrayList<>(this.listeChoixPossible);
-        Random rand = new Random(seed);
-        Collections.shuffle(pref, rand);
-        this.listeSouhait = pref;
     }
     public void addIndividu(int individuToAdd)
     {

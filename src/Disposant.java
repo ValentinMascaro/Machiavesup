@@ -16,7 +16,6 @@ public class Disposant {
     protected int seed;
     protected int marie;
     protected double note;
-    protected double bruit;
     protected int bloc;
     private int nbrBloc;
 
@@ -35,14 +34,14 @@ public class Disposant {
     public List<Integer> getListeRefus() {
         return listeRefus;
     }
-    public int generateRandomNumber(double mean) {
+    public double generateRandomNumber(double mean, int min,int max) {
         //double mean = 8.5;
         double sd = 1.5; // grand écart-type
         double randomNumber = this.rand.nextGaussian() * sd + mean;
-        randomNumber = Math.max(1, Math.min(10, randomNumber));
-        return (int)Math.round(randomNumber);
+        randomNumber = Math.max(min, Math.min(max, randomNumber));
+        return randomNumber;
     }
-    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux,int nbrBloc){
+    Disposant(int id, int playset, int seed,double note,double moyenneNbrVoeux,int nbrBloc){
         this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
@@ -54,34 +53,10 @@ public class Disposant {
         this.playset=playset;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
+        this.nbrSouhait = (int)Math.round(this.generateRandomNumber(moyenneNbrVoeux,1,10));
         this.marie=-1;
-        double aleatoire = rand.nextDouble();
-        double y = note;
-        double x = note+1.0;
         // Calculer la note aléatoire entre x et y
-       this.note= aleatoire * (y - x) + x;
-        this.bruit = bruit;
-    }
-    Disposant(int id, int playset, int seed,double bruit){
-        this.id=id;
-        this.listeAccepte=new ArrayList<>();
-        this.listeAttente=new ArrayList<>();
-        this.listeRefus=new ArrayList<>();
-        Random rand = new Random(seed);
-        this.playset=playset;
-        this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
-       // this.nbrSouhait=playset;
-        ArrayList<Integer> listeInteger=new ArrayList<>();
-        this.seed=seed;
-        for(int i =0;i<nbrSouhait;i++)
-        {
-            listeInteger.add(i);
-        }
-        this.listeChoixPossible=listeInteger;
-        this.marie=-1;
-        this.note = rand.nextGaussian(10,4);
-        this.bruit = bruit;
+       this.note= this.generateRandomNumber(note,0,nbrBloc)+this.rand.nextDouble();
     }
     public void add_accepte(Integer formation)
     {
@@ -128,7 +103,7 @@ public class Disposant {
         K[] keys = map.keySet().toArray((K[]) new Object[map.size()]);
         return keys[this.rand.nextInt(keys.length)];
     }
-   public void genererListeSouhait(Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList)
+   public void genererListeSouhait(Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList,double bruit)
    {
        int nbrsouhaitTmp = this.nbrSouhait;
        if(proposants.size()<nbrsouhaitTmp)
@@ -198,25 +173,11 @@ public class Disposant {
                propCopy.get(numeroBloc).remove(numeroFormation);
            }
        }
-       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*this.nbrBloc)));
+       Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-bruit*this.nbrBloc,bruit*this.nbrBloc)));
        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
    }
-    public ArrayList<Integer> genererListeSouhait( ) {
-        ArrayList<Integer> numbers = new ArrayList<>();
-        Set<Integer> usedNumbers = new HashSet<>();
-        Random rand = new Random(seed);
-        while (numbers.size() < this.nbrSouhait) {
-            int number = rand.nextInt(playset-1+1);
-            if (!usedNumbers.contains(number)) {
-                numbers.add(number);
-                usedNumbers.add(number);
-            }
-        }
 
-        this.listeSouhait=numbers;
-        return numbers;
-    }
     public int reponse(int proposant, int marieActuel)
     {
         if(logic.compare(proposant, marieActuel))
