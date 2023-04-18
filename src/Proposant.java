@@ -46,7 +46,8 @@ public class Proposant {
     }
     public boolean nouvelleDemande(Disposant etudiant)
     {
-        if(nbrDemandeRecu+1>demande)
+        //return true; // test
+       if(nbrDemandeRecu+1>demande)
         {
 
             return false;

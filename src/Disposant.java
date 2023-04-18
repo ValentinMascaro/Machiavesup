@@ -18,7 +18,7 @@ public class Disposant {
     protected double note;
     protected double bruit;
     protected int bloc;
-    private double nbrBloc;
+    private int nbrBloc;
 
     public int getPlayset() {
         return playset;
@@ -35,8 +35,14 @@ public class Disposant {
     public List<Integer> getListeRefus() {
         return listeRefus;
     }
-
-    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux,double nbrBloc){
+    public int generateRandomNumber(double mean) {
+        //double mean = 8.5;
+        double sd = 1.5; // grand écart-type
+        double randomNumber = this.rand.nextGaussian() * sd + mean;
+        randomNumber = Math.max(1, Math.min(10, randomNumber));
+        return (int)Math.round(randomNumber);
+    }
+    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux,int nbrBloc){
         this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
@@ -48,7 +54,7 @@ public class Disposant {
         this.playset=playset;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        this.nbrSouhait = this.nombreAleatoireEntre(1,10,moyenneNbrVoeux);
+        this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
         this.marie=-1;
         double aleatoire = rand.nextDouble();
         double y = note;
@@ -107,13 +113,11 @@ public class Disposant {
     {
         this.marie=-1;
     }
-    public int nombreAleatoireEntre(int x, int y, double z) // x min , y max, z moyenne
+    public int nombreAleatoireEntre(int min, int max, double moyenne,double ecartType) // x min , y max, z moyenne
     {
-        double moyenne = z;
-        double ecartType =0.5;
         double valeur = this.rand.nextGaussian() * ecartType + moyenne;
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        int entier = Math.min(Math.max((int) Math.round(valeur), x), y);
+        int entier = Math.min(Math.max((int) Math.round(valeur), min), max);
         return entier;
     }
     public <K,V> K getRandomKey(Map<K,V> map) {
@@ -126,9 +130,10 @@ public class Disposant {
     }
    public void genererListeSouhait(Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList)
    {
-       if(proposants.size()<this.nbrSouhait)
+       int nbrsouhaitTmp = this.nbrSouhait;
+       if(proposants.size()<nbrsouhaitTmp)
        {
-           this.nbrSouhait=proposants.size();
+           nbrsouhaitTmp=proposants.size();
        }
        Set<Integer> interdit = new HashSet<>();
        List<Proposant> formation = new ArrayList<>();
@@ -139,30 +144,30 @@ public class Disposant {
            propCopy.put(key, value);
        }
        this.listeSouhait=new ArrayList<>();
-       while(this.listeSouhait.size()<this.nbrSouhait )
+       while(this.listeSouhait.size()<nbrsouhaitTmp )
        {
-           System.out.println("PropSize :"+propCopy.size());
-           int numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note-0.5);
-           System.out.println("PropCopy "+propCopy);
-           System.out.println("PropVrai"+proposants);
-           System.out.println(listeSouhait+" "+nbrSouhait+" "+numeroBloc);
+          // System.out.println("PropSize :"+propCopy.size());
+           int numeroBloc = this.nombreAleatoireEntre(0, this.nbrBloc, this.note,0.5);
+         //  System.out.println("PropCopy "+propCopy);
+         //  System.out.println("PropVrai"+proposants);
+         //  System.out.println(listeSouhait+" "+nbrSouhait+" "+numeroBloc);
          //  System.out.println("bloc n : "+numeroBloc+" note : "+this.note+hashSouhait);
            while( propCopy.size()!=0 && (propCopy.get(numeroBloc)==null || propCopy.get(numeroBloc).size()==0) ) {
-               System.out.println("Size :"+propCopy.size()+propCopy);
-               System.out.println("Remove bloc :"+numeroBloc);
+             //  System.out.println("Size :"+propCopy.size()+propCopy);
+              // System.out.println("Remove bloc :"+numeroBloc);
                propCopy.remove(numeroBloc);
                interdit.add(numeroBloc);
-               numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note);
-               System.out.println("Numero bloc boucle :"+numeroBloc);
+               //numeroBloc=getRandomKey(propCopy);//   numeroBloc = this.nombreAleatoireEntre(0, propCopy.size(), this.note);
+             //  System.out.println("Numero bloc boucle :"+numeroBloc);
                while(interdit.contains(numeroBloc))
                {
                    if(propCopy.size()==0)
                    {
                        break;
                    }
-                   System.out.println("PropCopyWhile"+propCopy+propCopy.size());
+                  // System.out.println("PropCopyWhile"+propCopy+propCopy.size());
                   numeroBloc=getRandomKey(propCopy);
-                   System.out.println("Numero bloc :"+numeroBloc);
+                  // System.out.println("Numero bloc :"+numeroBloc);
 
                }
            }
@@ -170,21 +175,25 @@ public class Disposant {
            {
                break;
            }
-           int numeroFormation = rand.nextInt(0,propCopy.get(numeroBloc).size());
-           System.out.println("Numero formation :"+numeroFormation);
+           int numeroFormation = rand.nextInt(0,propCopy.get(numeroBloc).size());//this.generateRandomNumber(0);
+           if(propCopy.get(numeroBloc).size()<=numeroFormation)
+           {
+               numeroFormation=propCopy.get(numeroBloc).size()-1;//0;//
+           }
+          // System.out.println("Numero formation :"+numeroFormation);
            if(propCopy.get(numeroBloc).get(numeroFormation).nouvelleDemande(this))
            {
-               System.out.println("ajout formation");
+           //    System.out.println("ajout formation");
            this.listeSouhait.add(propCopy.get(numeroBloc).get(numeroFormation).getId());
            formation.add(proposantList.get(propCopy.get(numeroBloc).get(numeroFormation).getId()));
            propCopy.get(numeroBloc).remove(numeroFormation);
            }
            else
            {
-               System.out.println("rejet");
-               this.nbrSouhait--;
+             //  System.out.println("rejet");
+              // this.nbrSouhait--;
               // System.out.println("Else "+this.id+" | "+propCopy+" note : "+this.note+" bloc choisi : "+numeroBloc);
-               System.out.println(numeroBloc+" "+numeroFormation);
+              // System.out.println(numeroBloc+" "+numeroFormation);
                proposants.get(numeroBloc).remove(propCopy.get(numeroBloc).get(numeroFormation));
                propCopy.get(numeroBloc).remove(numeroFormation);
            }

@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Problem de répartition, trop d'étudiant">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="csvReader done / liste souhait etudiant à faire">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +18,6 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -47,11 +47,10 @@
     &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Valen/.m2/repository/com/diffplug/guava/guava-core/19.0.0/guava-core-19.0.0.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.packagesearch.PackageSearchGeneralConfigurable&quot;
   }
 }</component>
   <component name="RunManager">
@@ -64,8 +63,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -121,28 +118,21 @@
       <option name="project" value="LOCAL" />
       <updated>1679654827326</updated>
     </task>
-    <task id="LOCAL-00007" summary="Parcoursup + cycle ( avec test, 0 resultat)">
-      <created>1680708140135</created>
+    <task id="LOCAL-00007" summary="csvReader done / repartition par bloc à tester">
+      <created>1681476702445</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1680708140135</updated>
+      <updated>1681476702445</updated>
     </task>
-    <task id="LOCAL-00008" summary="Problem de répartition, trop d'étudiant">
-      <created>1681670148736</created>
+    <task id="LOCAL-00008" summary="csvReader done / liste souhait etudiant à faire">
+      <created>1681482757534</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1681670148736</updated>
+      <updated>1681482757534</updated>
     </task>
-    <task id="LOCAL-00009" summary="Problem de répartition, trop d'étudiant">
-      <created>1681679361841</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1681679361841</updated>
-    </task>
-    <option name="localTasksCounter" value="10" />
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -156,7 +146,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="listeOrdonneReflechiBruiter" />
+                        <option value="listePartielOrdonne" />
                       </list>
                     </value>
                   </entry>
@@ -175,8 +165,8 @@
     <MESSAGE value="setListeSouhait +pratique" />
     <MESSAGE value="Exemple manipulation playset 2" />
     <MESSAGE value="prochainEtatStable avec liste total." />
-    <MESSAGE value="Parcoursup + cycle ( avec test, 0 resultat)" />
-    <MESSAGE value="Problem de répartition, trop d'étudiant" />
-    <option name="LAST_COMMIT_MESSAGE" value="Problem de répartition, trop d'étudiant" />
+    <MESSAGE value="csvReader done / repartition par bloc à tester" />
+    <MESSAGE value="csvReader done / liste souhait etudiant à faire" />
+    <option name="LAST_COMMIT_MESSAGE" value="csvReader done / liste souhait etudiant à faire" />
   </component>
 </project>

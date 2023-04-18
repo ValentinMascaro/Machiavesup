@@ -8,9 +8,10 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed = 1;
-        for(int nbrTest = 0 ; nbrTest<1;nbrTest++) {
-            double nbrdevoeuxmoyen = 8.0;
-            int nbrbloc = 5;
+        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
+            System.out.println("Seed pour ce test : "+seed);
+            double nbrdevoeuxmoyen =8.5; // 3 70 113 116 67 66 114 87
+            int nbrbloc = 10; //36488
             csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup.csv",seed);
             csv.setNbrdemande();
             int playset = csv.getNbrFormation();
@@ -27,16 +28,17 @@ public class Main {
             // int demandeCreer=0;
             int nbrEtudiant = 0;
             for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
-                System.out.println(entry.getKey() + " | ");
+               // System.out.println(entry.getKey() + " | ");
                 int demande = 0;
+                entry.getValue().sort( (a,b)->b.getDemande()-a.getDemande()); // trie selon le nbr de demande.
                 for (int i = 0; i < entry.getValue().size(); i++) {
                     demande += entry.getValue().get(i).getDemande();
                 }
-                System.out.println(demande);
+              //  System.out.println(demande);
                 // System.out.println(demande / 8 + " sur " + demandeCreer / 8);
                 //demandeCreer += demande;
-                for (int i = 0; i < (demande / nbrdevoeuxmoyen)-1; i++) {
-                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant, 0.2, entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
+                for (int i = 0; i < Math.round(demande / nbrdevoeuxmoyen); i++) {
+                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant, 0.01, entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
                     nbrEtudiant++;
                     disposants.get(entry.getKey()).add(disposant);
                     disposantList.add(disposant);
@@ -51,14 +53,17 @@ public class Main {
                 totalDemande+=csv.getNbrdemande().get(i);
             }
             System.out.println("Total demande = "+totalDemande);
-            System.out.println(proposants);
             System.out.println("Nbr étudiant groupe 0 :"+disposants.get(0).size());
-
+            Map<Integer,List<Proposant>> propCopy = new HashMap<>();
+            for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
+                Integer key = entry.getKey();
+                List<Proposant> value = new ArrayList<>(entry.getValue()); // on clone la liste
+                propCopy.put(key, value);
+            }
+           // Collections.shuffle(disposantList);
             for(Disposant d:disposantList)
             {
-                d.genererListeSouhait(proposants,proposantList);
-                System.out.println("---------");
-                printListeMiniInt(proposantList,disposantList);
+                d.genererListeSouhait(propCopy,proposantList);
             }
             System.out.println(proposants);
             int sommeD=0;
@@ -66,18 +71,24 @@ public class Main {
             {
                 sommeD+=p.nbrDemandeRecu;
             }
-            for(Disposant d : disposantList.subList(disposantList.size()-100,disposantList.size()))
-            {
-                System.out.println(d.listeSouhait+" "+d.nbrSouhait);
-            }
-            int moySOuhait=0;
+           /* for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
+                if(entry.getValue().size()>10) {
+                    for (Disposant d : entry.getValue().subList(0, 10)) {//entry.getValue().subList(entry.getValue().size() - 10, entry.getValue().size())) {
+                        System.out.println(d.listeSouhait + " " + d.nbrSouhait + " bloc :" + d.bloc+ " seed :"+d.getSeed());
+                    }
+                }
+            }*/
+            double moySOuhait=0.0;
+            double moyObtenu=0.0;
             for(Disposant d : disposantList)
             {
-                moySOuhait+=d.nbrSouhait;
+                moySOuhait+=d.getNbrSouhait();
+                moyObtenu+=d.getListeSouhait().size();
             }
-            System.out.println("Moyenne "+moySOuhait/disposantList.size());
-            System.out.println("Total demande reçu :"+sommeD);
-            printListeMiniInt(proposantList,disposantList);
+            System.out.println("Moyenne souhaité "+moySOuhait/disposantList.size());
+            System.out.println("Moyenne obtenu "+moyObtenu/disposantList.size());
+            System.out.println("Total demande reçu :"+sommeD+" / "+totalDemande);
+            printListeFormationByReputation(proposants,false);
            // Parcoursup(proposants, disposants, 15, 0, disposantList, proposantList);
             //System.out.println("Seed :" + seed + "Nb cycle : " + searchCycle(disposantList, proposantList));
             seed++;
@@ -88,6 +99,42 @@ public class Main {
         System.out.println(proposants.get(0));
         System.out.println(disposantList.get(0).getListeSouhait());*/
     }
+
+    private static void printListeFormationByReputation(Map<Integer, List<Proposant>> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
+        for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
+            List<Proposant> list = entry.getValue();
+            for(Proposant p : list)
+            {
+                List<Integer> souhait = p.getListeSouhait();
+                List<Integer> accepte = p.getListeAcceptation();
+                List<Integer> attente = p.getListeAttente();
+                List<Integer> refus = p.getListeRefus();
+                if(allOrNo) {
+                    if (p.nbrDemandeRecu < p.getDemande()) {
+                        System.out.print("\033[31m");
+                    }
+                    if (souhait != null) {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    } else {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    }
+                    System.out.println(" Souhait : " + souhait + " " + accepte + "\033[0m");
+                }
+                else{if(p.nbrDemandeRecu<p.getDemande()) {
+                    System.out.print("\033[31m");
+                    if (souhait != null) {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    } else {
+                        System.out.print("Formation : " + p.getId() + " Reputation : " + p.getReputation() + " | " + p.getNbrIndividu() + " places et " + p.nbrDemandeRecu + " demandes /" + p.demande);
+                    }
+                    System.out.println(" Souhait : " + souhait + " " + accepte + "\033[0m");
+                }
+                }
+
+            }
+        }
+    }
+
     public static void test(){
         int nbrEtudiant=200;
         int nbrFormation=20;
@@ -222,7 +269,7 @@ public class Main {
     {
         for(int i = 0 ; i<disposants.size();i++)
         {
-            disposants.get(i).genererListeSouhait(proposants,proposantList);
+            disposants.get(i).genererListeSouhait(proposants,proposantList) ;
             disposants.get(i).genererComparaison();
         }
         for(int i = 0 ; i<proposantList.size();i++)
