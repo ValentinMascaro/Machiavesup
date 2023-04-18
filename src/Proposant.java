@@ -42,22 +42,22 @@ public class Proposant {
     public int getDemande() {
         return demande;
     }
-    public boolean nouvelleDemande(Disposant etudiant)
+    public int nouvelleDemande(Disposant etudiant)
     {
         //return true; // test
        if(nbrDemandeRecu+1>demande)
         {
 
-            return false;
+            return -1;
         }
         if(listeDossier.contains(etudiant))
         {
 
-            return false;
+            return -1;
         }
         this.nbrDemandeRecu++;
         this.addDossierIndividu(etudiant);
-        return true;
+        return nbrDemandeRecu;
     }
     public void generateAllInnerListe(double bruit)
     {

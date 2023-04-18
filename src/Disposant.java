@@ -7,7 +7,7 @@ public class Disposant {
     protected Comparaison logic;
     protected int id;
     protected int nbrSouhait;
-    protected int playset;
+
     protected List<Integer> listeSouhait;
     protected List<Integer> listeAccepte;
     protected List<Integer> listeAttente;
@@ -19,9 +19,7 @@ public class Disposant {
     protected int bloc;
     private int nbrBloc;
 
-    public int getPlayset() {
-        return playset;
-    }
+
 
     public List<Integer> getListeAccepte() {
         return listeAccepte;
@@ -41,7 +39,7 @@ public class Disposant {
         randomNumber = Math.max(min, Math.min(max, randomNumber));
         return randomNumber;
     }
-    Disposant(int id, int playset, int seed,double note,double moyenneNbrVoeux,int nbrBloc){
+    Disposant(int id, int seed,double note,double moyenneNbrVoeux,int nbrBloc){
         this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
@@ -50,7 +48,7 @@ public class Disposant {
         this.listeRefus=new ArrayList<>();
         this.rand = new Random(seed);
         this.seed=seed;
-        this.playset=playset;
+
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
         this.nbrSouhait = (int)Math.round(this.generateRandomNumber(moyenneNbrVoeux,1,10));
@@ -103,6 +101,34 @@ public class Disposant {
         K[] keys = map.keySet().toArray((K[]) new Object[map.size()]);
         return keys[this.rand.nextInt(keys.length)];
     }
+    public void genererListeSouhait(List<Proposant> proposantList,double bruit,int demande)
+    {
+        List<Proposant> formation = new ArrayList<>();
+        List<Proposant> formationCopy = new ArrayList<>(proposantList);
+        this.listeSouhait=new ArrayList<>();
+        while(this.listeSouhait.size()<this.nbrSouhait)
+        {
+            int randomNumber = this.rand.nextInt(demande);
+            int sum=0;
+            int index=0;
+            while(sum<randomNumber && index<formationCopy.size())
+            {
+                sum+=formationCopy.get(index).getDemande();
+            }
+            this.listeSouhait.add(formationCopy.get(index).getId());
+            formation.add(formationCopy.get(index));
+            int demandePostDemande=formationCopy.get(index).nouvelleDemande(this);
+            formationCopy.remove(index);
+            demande-=demandePostDemande;
+            if(formationCopy.get(index).getDemande()==demandePostDemande)
+            {
+                proposantList.remove(formationCopy.get(index));
+            }
+        }
+        Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-bruit*this.nbrBloc,bruit*this.nbrBloc)));
+        Stream<Pair<Proposant, Double>> listeReputationBruiter = formation.stream().map(noteBruiter);
+        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
+    }
    public void genererListeSouhait(Map<Integer,List<Proposant>> proposants,List<Proposant> proposantList,double bruit)
    {
        int nbrsouhaitTmp = this.nbrSouhait;
@@ -150,13 +176,13 @@ public class Disposant {
            {
                break;
            }
-           int numeroFormation = rand.nextInt(0,propCopy.get(numeroBloc).size());//this.generateRandomNumber(0);
+           int numeroFormation = (int) this.generateRandomNumber(0.2,0,propCopy.get(numeroBloc).size()-1);//rand.nextInt(0,propCopy.get(numeroBloc).size());//this.generateRandomNumber(0);
            if(propCopy.get(numeroBloc).size()<=numeroFormation)
            {
                numeroFormation=propCopy.get(numeroBloc).size()-1;//0;//
            }
           // System.out.println("Numero formation :"+numeroFormation);
-           if(propCopy.get(numeroBloc).get(numeroFormation).nouvelleDemande(this))
+           if(propCopy.get(numeroBloc).get(numeroFormation).nouvelleDemande(this)!=-1)
            {
            //    System.out.println("ajout formation");
            this.listeSouhait.add(propCopy.get(numeroBloc).get(numeroFormation).getId());
