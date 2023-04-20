@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        int seed = 1;
+        int seed = 7;
         for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
             System.out.println("Seed pour ce test : "+seed);
             double nbrdevoeuxmoyen =8.5;
-            int nbrbloc = 10;
+            int nbrbloc = 20;
             csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup - Copie.csv",seed);
             csv.setNbrdemande();
             int playset = csv.getNbrFormation();
@@ -50,10 +50,11 @@ public class Main {
                 List<Proposant> value = new ArrayList<>(entry.getValue()); // on clone la liste
                 propCopy.put(key, value);
             }
-            for(Disposant d:disposantList)
+            init(disposantList,propCopy,seed,proposantList,totalDemande);
+            /*for(Disposant d:disposantList)
             {
                 d.genererListeSouhait(propCopy,proposantList,totalDemande);
-            }
+            }*/
             System.out.println(proposants);
             int sommeD=0;
             for(Proposant p : proposantList)
@@ -77,8 +78,9 @@ public class Main {
             System.out.println("Moyenne souhaité "+moySOuhait/disposantList.size());
             System.out.println("Moyenne obtenu "+moyObtenu/disposantList.size());
             System.out.println("Total demande reçu :"+sommeD+" / "+totalDemande);
-            printListeFormationByReputation(proposants,false);
-           // Parcoursup(15,disposantList, proposantList,totalDemande);
+            System.out.println("Seed :"+seed);
+           // printListeFormationByReputation(proposants,true);
+            Parcoursup(15,disposantList, proposantList);
             seed++;
         }
         System.out.println("fin");
@@ -431,6 +433,7 @@ public class Main {
         Strategie strategie = new StrategieDefault();
        for(int jour = 0; jour < nbrJour ; jour++)
        {
+           System.out.println("Jour :"+jour);
           // System.out.println("Jour "+jour);
         //   System.out.println("Jour : "+jour+" / "+nbrJour);
          //  System.out.println("---------------------------");
@@ -438,6 +441,7 @@ public class Main {
            Appel(proposantList,disposantsList);
          //  printListe(proposants,disposants);
            Reponse(strategie,proposantList,disposantsList);
+           System.out.println(searchCycle(disposantsList,proposantList)+" Cycle trouvé");
          //  printListe(proposants,disposants);
        }
     }
