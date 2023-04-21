@@ -42,7 +42,7 @@ public class Disposant {
         randomNumber = Math.max(1, Math.min(10, randomNumber));
         return (int)Math.round(randomNumber);
     }
-    Disposant(int id, int playset, int seed,double bruit,double note,double moyenneNbrVoeux,int nbrBloc){
+    Disposant(int id, int seed,double bruit,double note,double moyenneNbrVoeux,int nbrBloc){
         this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
@@ -51,7 +51,6 @@ public class Disposant {
         this.listeRefus=new ArrayList<>();
         this.rand = new Random(seed);
         this.seed=seed;
-        this.playset=playset;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
         this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
@@ -63,25 +62,15 @@ public class Disposant {
        this.note= aleatoire * (y - x) + x;
         this.bruit = bruit;
     }
-    Disposant(int id, int playset, int seed,double bruit){
-        this.id=id;
-        this.listeAccepte=new ArrayList<>();
-        this.listeAttente=new ArrayList<>();
-        this.listeRefus=new ArrayList<>();
-        Random rand = new Random(seed);
-        this.playset=playset;
-        this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
-       // this.nbrSouhait=playset;
-        ArrayList<Integer> listeInteger=new ArrayList<>();
-        this.seed=seed;
-        for(int i =0;i<nbrSouhait;i++)
+    public boolean canAffect(Proposant proposant)
+    {
+        if( (this.listeSouhait.size() < this.nbrSouhait ) && this.listeSouhait.contains(proposant.getId()) )
         {
-            listeInteger.add(i);
+           return false;
         }
-        this.listeChoixPossible=listeInteger;
-        this.marie=-1;
-        this.note = rand.nextGaussian(10,4);
-        this.bruit = bruit;
+        //this.listeSouhait.add(proposant.getId());
+        //proposant.nouvelleDemande(this);
+        return true;
     }
     public void add_accepte(Integer formation)
     {

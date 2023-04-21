@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Choix par reputation puis par attractivité">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Repartition demande cohérente à 90%">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,12 +133,12 @@
       <option name="project" value="LOCAL" />
       <updated>1681482757534</updated>
     </task>
-    <task id="LOCAL-00009" summary="Choix par reputation puis par attractivité">
-      <created>1681990993275</created>
+    <task id="LOCAL-00009" summary="Repartition demande cohérente à 90%">
+      <created>1681810995140</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1681990993275</updated>
+      <updated>1681810995140</updated>
     </task>
     <option name="localTasksCounter" value="10" />
     <servers />
@@ -151,7 +154,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="ParcoursupSimulationFromCsv" />
+                        <option value="listePartielOrdonne" />
                       </list>
                     </value>
                   </entry>
@@ -172,7 +175,7 @@
     <MESSAGE value="prochainEtatStable avec liste total." />
     <MESSAGE value="csvReader done / repartition par bloc à tester" />
     <MESSAGE value="csvReader done / liste souhait etudiant à faire" />
-    <MESSAGE value="Choix par reputation puis par attractivité" />
-    <option name="LAST_COMMIT_MESSAGE" value="Choix par reputation puis par attractivité" />
+    <MESSAGE value="Repartition demande cohérente à 90%" />
+    <option name="LAST_COMMIT_MESSAGE" value="Repartition demande cohérente à 90%" />
   </component>
 </project>

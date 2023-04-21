@@ -273,4 +273,8 @@ public class Proposant {
     public List<Integer> getListeAttente() {
         return listeAttente;
     }
+
+    public int getNbrDemandeRecu() {
+        return nbrDemandeRecu;
+    }
 }
