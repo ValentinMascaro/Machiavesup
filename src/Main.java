@@ -6,77 +6,43 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        int seed = 7;
-        for(int nbrTest = 0 ; nbrTest<1;nbrTest++) {
-            System.out.println("Seed pour ce test : "+seed);
-            double nbrdevoeuxmoyen =8.5;
-            int nbrbloc = 20;
-            csvSimuBny csv = new csvSimuBny("cpgePtsi.csv",seed);
-            csv.setNbrdemande();
-            int playset = csv.getNbrFormation();
-            csv.setFormation(nbrbloc);
-            Map<Integer, List<Proposant>> proposants = csv.getFormation();
-            List<Proposant> proposantList = csv.getFormationList();
-            Map<Integer, List<Disposant>> disposants = new HashMap<>();
-            List<Disposant> disposantList = new ArrayList<>();
-            for (int i = 0; i < nbrbloc + 1; i++) {
-                disposants.put(i, new ArrayList<>());
-            }
-            /*for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
-                int demande = 0;
-                entry.getValue().sort( (a,b)->b.getDemande()-a.getDemande()); // trie selon le nbr de demande.
-                for (int i = 0; i < entry.getValue().size(); i++) {
-                    demande += entry.getValue().get(i).getDemande();
+        int seed = 1;
+        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) { //[89, 56, 83, 22, 69, 105, 104, 92, 116, 73]
+            double bruit = 0.05;
+            for(int testBruit =0;testBruit<10;testBruit++) {
+                System.out.println("Seed pour ce test : " + seed);
+                double nbrdevoeuxmoyen = 8.5;
+                int nbrbloc = 20;
+                csvSimuBny csv = new csvSimuBny("cpgePtsi.csv", seed);
+                csv.setNbrdemande();
+                int playset = csv.getNbrFormation();
+                csv.setFormation(nbrbloc);
+                Map<Integer, List<Proposant>> proposants = csv.getFormation();
+                List<Proposant> proposantList = csv.getFormationList();
+                int totalDemande = 0;
+                for (int i = 0; i < csv.getNbrdemande().size(); i++) {
+                    totalDemande += csv.getNbrdemande().get(i);
                 }
-                for (int i = 0; i < Math.round(demande / nbrdevoeuxmoyen); i++) {
-                    Disposant disposant = new Disposant(nbrEtudiant, playset, seed+nbrEtudiant, 0.01, entry.getKey(), nbrdevoeuxmoyen, nbrbloc);
-                    nbrEtudiant++;
-                    disposants.get(entry.getKey()).add(disposant);
-                    disposantList.add(disposant);
+                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc / 2, nbrdevoeuxmoyen);
+                /*int sommeD = 0;
+                for (Proposant p : proposantList) {
+                    sommeD += p.nbrDemandeRecu;
                 }
-            }*/
-            int totalDemande=0;
-            for(int i =0;i<csv.getNbrdemande().size();i++) {
-                totalDemande+=csv.getNbrdemande().get(i);
-            }
-            Map<Integer,List<Proposant>> propCopy = new HashMap<>();
-            for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
-                Integer key = entry.getKey();
-                List<Proposant> value = new ArrayList<>(entry.getValue()); // on clone la liste
-                propCopy.put(key, value);
-            }
-            init(disposantList,seed,proposantList,totalDemande,nbrbloc);
-            /*for(Disposant d:disposantList)
-            {
-                d.genererListeSouhait(propCopy,proposantList,totalDemande);
-            }*/
-            System.out.println(proposants);
-            int sommeD=0;
-            for(Proposant p : proposantList)
-            {
-                sommeD+=p.nbrDemandeRecu;
-            }
-            for (Map.Entry<Integer, List<Disposant>> entry : disposants.entrySet()) {
-                if(entry.getValue().size()>10) {
-                    for (Disposant d : entry.getValue().subList(0, 10)) {//entry.getValue().subList(entry.getValue().size() - 10, entry.getValue().size())) {
-                        System.out.println(d.listeSouhait + " " + d.nbrSouhait + " bloc :" + d.bloc+ " seed :"+d.getSeed());
-                    }
+                double moySOuhait = 0.0;
+                double moyObtenu = 0.0;
+                for (Disposant d : disposantList) {
+                    moySOuhait += d.getNbrSouhait();
+                    moyObtenu += d.getListeSouhait().size();
                 }
+                // printListeFormationByReputation(proposants,true);
+                System.out.println("Moyenne souhaité " + moySOuhait / disposantList.size());
+                System.out.println("Moyenne obtenu " + moyObtenu / disposantList.size());
+                System.out.println("Total demande reçu :" + sommeD + " / " + totalDemande);*/
+                Parcoursup(15, disposantList, proposantList);
+                //System.out.println(disposantList.get(500).getListeSouhait());
+                System.out.println("Seed :" + seed+" Bruit : "+bruit);
+                bruit+=0.1;
             }
-            double moySOuhait=0.0;
-            double moyObtenu=0.0;
-            for(Disposant d : disposantList)
-            {
-                moySOuhait+=d.getNbrSouhait();
-                moyObtenu+=d.getListeSouhait().size();
-            }
-            // printListeFormationByReputation(proposants,true);
-            //Parcoursup(15,disposantList, proposantList);
-            System.out.println("Moyenne souhaité "+moySOuhait/disposantList.size());
-            System.out.println("Moyenne obtenu "+moyObtenu/disposantList.size());
-            System.out.println("Total demande reçu :"+sommeD+" / "+totalDemande);
-            System.out.println("Seed :"+seed);
-
             seed++;
         }
         System.out.println("fin");
@@ -202,12 +168,13 @@ public class Main {
     }
 
 
-    public static void init(List<Disposant> disposants,int seed,List<Proposant> proposantList,int totalDemande,int noteMin,int noteMax,double bruit,double noteMoyenne, double moyenneNbrVoeux)
+    public static List<Disposant> init(int seed,List<Proposant> proposantList,int totalDemande,int noteMin,int noteMax,double bruit,double noteMoyenne, double moyenneNbrVoeux)
     {
+        List<Disposant> disposants = new ArrayList<>();
         int nbDemande=0;
         int id=0;
         Random rand = new Random(seed);
-        while(nbDemande<totalDemande)
+        while(nbDemande<totalDemande*1.05)
         {
             Disposant d = new Disposant(id,seed,bruit,noteMoyenne,moyenneNbrVoeux,noteMax);
             disposants.add(d);
@@ -215,24 +182,34 @@ public class Main {
             seed++;
             id++;
         }
-        System.out.println("Nb etudiant : "+disposants.size());
+        disposants.stream().sorted((a,b)-> (int)Math.signum(a.getNote()-b.getNote()));
+        List<Disposant> dispoCopy = new ArrayList<>(disposants);
+
+
         for(int i=0;i<proposantList.size();i++)
         {
             Proposant p = proposantList.get(i);
+            //System.out.println("I "+i);
             while(p.getNbrDemandeRecu()<p.getDemande())
             {
-                double choix =  convertToRange(nombreAleatoireEntre(seed,noteMin,noteMax,p.getReputation(),1.5),noteMin,noteMax);
+
+                //System.out.println("Id :"+p.getId()+" Nb Demande recu :"+p.getNbrDemandeRecu());
+                double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,p.getReputation(),1.5),noteMin,noteMax);
+                //        System.out.println("Choix :"+choix);
                 int index=(int)Math.round(disposants.size()*choix);
                 int decalage=1;
                 int signe=-1;
-                boolean affecte;
                 while(index>=disposants.size() || index<0 || !disposants.get(index).canAffect(p))
                 { // 0 1 2 3 4 5 6
                   index+=decalage*signe;
                   decalage++;
                   signe*=-1;
                 }
-
+                disposants.get(index).affectSouhait(p);
+                if(disposants.get(index).getNbrSouhait()==disposants.get(index).getListeSouhait().size())
+                {
+                    disposants.remove(disposants.get(index));
+                }
             }
         }
         for(int i = 0 ; i<proposantList.size();i++)
@@ -240,6 +217,15 @@ public class Main {
             proposantList.get(i).generateAllInnerListe(seed);
             seed++;
         }
+        for(Proposant p : proposantList)
+        {
+            p.generateAllInnerListe(bruit);
+        }
+        for(Disposant d : dispoCopy)
+        {
+            d.genererComparaison();
+        }
+        return dispoCopy;
     }
     public static double convertToRange(double value, double min, double max) {
         // Vérifier que la valeur se trouve dans la plage spécifiée
@@ -254,13 +240,14 @@ public class Main {
         return normalizedValue;
     }
 
-    public static int nombreAleatoireEntre(int seed,int min, int max, double moyenne,double ecartType) // x min , y max, z moyenne
+    public static double nombreAleatoireEntre(Random rand,int min, int max, double moyenne,double ecartType) // x min , y max, z moyenne
     {
-        Random rand=new Random(seed);
-        double valeur = rand.nextGaussian() * ecartType + moyenne;
+        double valeur =-1.0;
+        do {
+            valeur = rand.nextGaussian() * ecartType + moyenne;
+        }while(valeur>max || valeur<min);
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        int entier = Math.min(Math.max((int) Math.round(valeur), min), max);
-        return entier;
+        return valeur;
     }
     public static void init(List<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int seed,List<Proposant> proposantList,int totalDemande)
     {

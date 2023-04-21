@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Repartition demande cohérente à 90%">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="TODO init">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="listeOrdonneReflechiBruiterCapacite" />
+        <entry key="$PROJECT_DIR$" value="ParcoursupSimulationFromCsv" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -140,7 +138,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681810995140</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="TODO init">
+      <created>1682073401042</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1682073401042</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -176,6 +181,19 @@
     <MESSAGE value="csvReader done / repartition par bloc à tester" />
     <MESSAGE value="csvReader done / liste souhait etudiant à faire" />
     <MESSAGE value="Repartition demande cohérente à 90%" />
-    <option name="LAST_COMMIT_MESSAGE" value="Repartition demande cohérente à 90%" />
+    <MESSAGE value="TODO init" />
+    <option name="LAST_COMMIT_MESSAGE" value="TODO init" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <condition expression="i==122" language="JAVA" />
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>191</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

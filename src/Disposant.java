@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 public class Disposant {
     Random rand;
+    List<Proposant> listeFormation;
     protected Comparaison logic;
     protected int id;
     protected int nbrSouhait;
@@ -43,9 +44,11 @@ public class Disposant {
         return (int)Math.round(randomNumber);
     }
     Disposant(int id, int seed,double bruit,double note,double moyenneNbrVoeux,int nbrBloc){
+        this.listeFormation = new ArrayList<>();
         this.nbrBloc=nbrBloc;
         this.bloc=(int)note;
         this.id=id;
+        this.listeSouhait=new ArrayList<>();
         this.listeAccepte=new ArrayList<>();
         this.listeAttente=new ArrayList<>();
         this.listeRefus=new ArrayList<>();
@@ -64,13 +67,14 @@ public class Disposant {
     }
     public boolean canAffect(Proposant proposant)
     {
-        if( (this.listeSouhait.size() < this.nbrSouhait ) && this.listeSouhait.contains(proposant.getId()) )
-        {
-           return false;
-        }
-        //this.listeSouhait.add(proposant.getId());
-        //proposant.nouvelleDemande(this);
-        return true;
+        return this.listeSouhait.size() < this.nbrSouhait  && !this.listeSouhait.contains(proposant.getId()) ;
+
+    }
+    public void affectSouhait(Proposant proposant)
+    {
+        this.listeFormation.add(proposant);
+        this.listeSouhait.add(proposant.getId());
+        proposant.nouvelleDemande(this);
     }
     public void add_accepte(Integer formation)
     {
@@ -198,6 +202,9 @@ public class Disposant {
     }
     public void genererComparaison()
     {
+        Function<Proposant,Pair<Proposant,Double>> noteBruiter =  (proposant -> new Pair(proposant,proposant.getReputation()+rand.nextDouble(-this.bruit*this.nbrBloc,this.bruit*this.nbrBloc)));
+        Stream<Pair<Proposant, Double>> listeReputationBruiter = this.listeFormation.stream().map(noteBruiter);
+        this.listeSouhait= listeReputationBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Proposant::getId).toList();
         this.logic=new Comparaison(this.seed,this.listeSouhait);
     }
 
