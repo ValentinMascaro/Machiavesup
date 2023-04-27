@@ -7,47 +7,55 @@ public class Main {
     public static void main(String[] args) {
       // int seed =67;
         int seed=1;
-        int playset=10;
+        int playset=4;
         // test();
         try {
             FileWriter nbCycle = new FileWriter("nbCycle.txt");
-            FileWriter sizeCycle = new FileWriter("sizeCycle.txt");
-            for (int i = 0; i < 1; i++) {
+            FileWriter nbEtudiantTraverse = new FileWriter("nbEtudiantTraverse.txt");
+            FileWriter nbEtudiantUpgrade = new FileWriter("nbEtudiantUpgrade.txt");
+            for (int i = 0; i < 100000; i++) {
                 List<Disposant> disposants = new ArrayList<>();
                 List<Proposant> proposants = new ArrayList<>();
                // System.out.println(seed);
                 init(disposants, proposants, playset, seed);
                 galeShapley(proposants, disposants, true);
-                List<Integer> cycle=searchCycle(disposants, proposants);
+                List<Pair<Integer,Integer>> cycle=searchCycle(disposants, proposants);
                 nbCycle.write(cycle.size()+"\n");
-                sizeCycle.write("[ ");
-                for(Integer integer : cycle) {
-                    sizeCycle.write(integer+" ,");
+                nbEtudiantTraverse.write("[ ");
+                for(Pair<Integer, Integer> integer : cycle) {
+                    nbEtudiantTraverse.write(integer.first()+" ,");
                 }
-                sizeCycle.write("]"+"\n");
+                nbEtudiantTraverse.write("]"+"\n");
+                nbEtudiantUpgrade.write("[ ");
+                for(Pair<Integer, Integer> integer : cycle) {
+                    nbEtudiantUpgrade.write(integer.second()+" ,");
+                }
+                nbEtudiantUpgrade.write("]"+"\n");
                 seed++;
                // printListeR(proposants, disposants);
             }
+            System.out.println("Fin");
             nbCycle.close();
-            sizeCycle.close();
+            nbEtudiantTraverse.close();
+            nbEtudiantUpgrade.close();
         }
 
  catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public static List<Integer> searchCycle(List<Disposant> disposants,List<Proposant> proposants){
-        List<Integer> nbrCycleTaille=new ArrayList<>();
+    public static List<Pair<Integer,Integer>> searchCycle(List<Disposant> disposants,List<Proposant> proposants){
+        List<Pair<Integer,Integer>> nbrCycleTaille=new ArrayList<>();
 
         for (int j = 0; j < disposants.size(); j++) {
             if (disposants.get(j).getMarie() != -1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie()) != 0) {
                // System.out.println(j);
-                  // System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
+                 //  System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
                 CompteurCycle count=new CompteurCycle();
                 Couple dispoPropo = prochainEtat(disposants, proposants, j,count);
                 if (dispoPropo.getDisposant() == j) {
-                   // System.out.println("sucess");
-                    nbrCycleTaille.add(count.getCount());
+                 //   System.out.println("sucess");
+                    nbrCycleTaille.add(new Pair<>(count.getCount(),count.getCountUpgrade()));
                 }
             }
         }
@@ -71,13 +79,14 @@ public class Main {
         {
             listeMariage.put(tmp.getDisposant(),MarieLibere);
             count.countPlusPlus();
+            count.countPlusPlusUpgrade();
             // listeMariage.get(tmp.getDisposant()).setProposant(MarieLibere);
             if(tmp.getProposant()==-1)
             {
                 return tmp;
             }
             MarieLibere= tmp.getProposant();
-           // System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
+            //System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
             tmp = libereProposant(disposants,proposants,tmp.getProposant(),listeMariage,count); // libere un marie et maj les mariage
 
             stop++;
