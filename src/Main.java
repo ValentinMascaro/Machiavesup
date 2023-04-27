@@ -1,5 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -7,13 +9,17 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         int seed = 1;
+        try{
+            FileWriter nbCycle = new FileWriter("nbCycle.txt");
+            FileWriter nbEtudiantTraverse = new FileWriter("nbEtudiantTraverse.txt");
+            FileWriter nbEtudiantUpgrade = new FileWriter("nbEtudiantUpgrade.txt");
         for(int nbrTest = 0 ; nbrTest<10;nbrTest++) { //[89, 56, 83, 22, 69, 105, 104, 92, 116, 73]
-            double bruit = 0.05;
-            for(int testBruit =0;testBruit<10;testBruit++) {
-                System.out.println("Seed pour ce test : " + seed);
+            double bruit = 0.30;
+            for(int testBruit =0;testBruit<1;testBruit++) {
+                //System.out.println("Seed pour ce test : " + seed);
                 double nbrdevoeuxmoyen = 8.5;
                 int nbrbloc = 20;
-                csvSimuBny csv = new csvSimuBny("cpgePtsi.csv", seed);
+                csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup - Copie.csv", seed);
                 csv.setNbrdemande();
                 int playset = csv.getNbrFormation();
                 csv.setFormation(nbrbloc);
@@ -24,26 +30,35 @@ public class Main {
                     totalDemande += csv.getNbrdemande().get(i);
                 }
                 List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc / 2, nbrdevoeuxmoyen);
-                /*int sommeD = 0;
-                for (Proposant p : proposantList) {
-                    sommeD += p.nbrDemandeRecu;
-                }
-                double moySOuhait = 0.0;
-                double moyObtenu = 0.0;
-                for (Disposant d : disposantList) {
-                    moySOuhait += d.getNbrSouhait();
-                    moyObtenu += d.getListeSouhait().size();
-                }
-                // printListeFormationByReputation(proposants,true);
-                System.out.println("Moyenne souhaité " + moySOuhait / disposantList.size());
-                System.out.println("Moyenne obtenu " + moyObtenu / disposantList.size());
-                System.out.println("Total demande reçu :" + sommeD + " / " + totalDemande);*/
                 Parcoursup(15, disposantList, proposantList);
-                //System.out.println(disposantList.get(500).getListeSouhait());
-                System.out.println("Seed :" + seed+" Bruit : "+bruit);
+                //try {
+
+                    List<Pair<Integer,Integer>> cycle=searchCycle(disposantList, proposantList);
+                    nbCycle.write(cycle.size()+"\n");
+                    nbEtudiantTraverse.write("[ ");
+                    for(Pair<Integer, Integer> integer : cycle) {
+                        nbEtudiantTraverse.write(integer.first()+" ,");
+                    }
+                    nbEtudiantTraverse.write("]"+"\n");
+                    nbEtudiantUpgrade.write("[ ");
+                    for(Pair<Integer, Integer> integer : cycle) {
+                        nbEtudiantUpgrade.write(integer.second()+" ,");
+                    }
+                    nbEtudiantUpgrade.write("]"+"\n");
+                    seed++;
+                    //System.out.println("Fin");
+
+                //System.out.println("Seed :" + seed+" Bruit : "+bruit);
                 bruit+=0.1;
             }
             seed++;
+        }
+            nbCycle.close();
+            nbEtudiantTraverse.close();
+            nbEtudiantUpgrade.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         System.out.println("fin");
     }
@@ -84,33 +99,32 @@ public class Main {
     }
 
 
-    public static int searchCycle(List<Disposant> disposants,List<Proposant> proposants){
-        int nbrCycle=0;
+    public static List<Pair<Integer,Integer>> searchCycle(List<Disposant> disposants,List<Proposant> proposants){
+        List<Pair<Integer,Integer>> nbrCycleTaille=new ArrayList<>();
+
         for (int j = 0; j < disposants.size(); j++) {
             if (disposants.get(j).getMarie() != -1 && disposants.get(j).getListeSouhait().indexOf(disposants.get(j).getMarie()) != 0) {
-                //System.out.println(j);
-                //   System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
-                Couple dispoPropo = prochainEtat(disposants, proposants, j);
+                // System.out.println(j);
+                //  System.out.println("Que se passe-t-il si " + j + " libere " + (char) (disposants.get(j).getMarie() + 'A') + " ?");
+                CompteurCycle count=new CompteurCycle();
+                Couple dispoPropo = prochainEtat(disposants, proposants, j,count);
                 if (dispoPropo.getDisposant() == j) {
-                    nbrCycle++;
-                    //System.out.println(seed);
-                   // listSeed.add(seed);
-                    //System.out.println("/!\\ " + j + " pourrai obtenir " + (char) (dispoPropo.getProposant() + 'A') + " en liberant " + (char) (disposants.get(j).getMarie() + 'A'));
+                    //   System.out.println("sucess");
+                    nbrCycleTaille.add(new Pair<>(count.getCount(),count.getCountUpgrade()));
                 }
             }
         }
-        return nbrCycle;
+        return nbrCycleTaille;
     }
-    public static Couple prochainEtat(List<Disposant> disposants,List<Proposant> proposants,int disposantCible)
+    public static Couple prochainEtat(List<Disposant> disposants,List<Proposant> proposants,int disposantCible,CompteurCycle count)
     {
-       //ArrayList<Couple> listeMariage = new ArrayList<>();
+        //ArrayList<Couple> listeMariage = new ArrayList<>();
         Map<Integer,Integer> listeMariage = new HashMap<Integer,Integer>(disposants.size());
       /*  for(int i=0;i<disposants.size();i++){
-
             listeMariage.add(i,new Couple(i,disposants.get(i).getMarie())); // un hash / dico / map
         }*/
         int MarieLibere = disposants.get(disposantCible).getMarie();
-        Couple tmp = libereProposant(disposants,proposants,MarieLibere,listeMariage); // je libere un marie
+        Couple tmp = libereProposant(disposants,proposants,MarieLibere,listeMariage,count); // je libere un marie
         if(tmp.getDisposant()==-1 || tmp.getProposant()==-1){
             return tmp; // pas d'amélioration possible
         }
@@ -118,26 +132,29 @@ public class Main {
         int stop=0;
         while(tmp.getDisposant()!=-1 && tmp.getDisposant()!=disposantCible)
         {
-           listeMariage.put(tmp.getDisposant(),MarieLibere);
-         // listeMariage.get(tmp.getDisposant()).setProposant(MarieLibere);
+            listeMariage.put(tmp.getDisposant(),MarieLibere);
+            count.countPlusPlus();
+            count.countPlusPlusUpgrade();
+            // listeMariage.get(tmp.getDisposant()).setProposant(MarieLibere);
             if(tmp.getProposant()==-1)
             {
                 return tmp;
             }
             MarieLibere= tmp.getProposant();
-           //System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
-            tmp = libereProposant(disposants,proposants,tmp.getProposant(),listeMariage); // libere un marie et maj les mariage
+            //System.out.println(tmp.getDisposant() + " liberera "+(char) (tmp.getProposant()+'A'));
+            tmp = libereProposant(disposants,proposants,tmp.getProposant(),listeMariage,count); // libere un marie et maj les mariage
 
             stop++;
             if(stop>200)
             {
-                System.out.println("--- boucle infini---");
+                //  System.out.println("--- boucle infini---");
                 return tmp;
             }
         }
         return new Couple(tmp.getDisposant(),MarieLibere);
     }
-    public static Couple libereProposant(List<Disposant> disposants,List<Proposant> proposants,int libere, Map<Integer,Integer> mariagePossible) // return le prochain marie liberer par quel disposant
+
+    public static Couple libereProposant(List<Disposant> disposants, List<Proposant> proposants, int libere, Map<Integer,Integer> mariagePossible,CompteurCycle count) // return le prochain marie liberer par quel disposant
     {
         Proposant proposantLibere = proposants.get(libere);
         int prochainDisposant=proposantLibere.getProchainListeAttente();
@@ -147,25 +164,27 @@ public class Main {
         }
         int etape=0;
         int prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.getOrDefault(prochainDisposant,disposants.get(prochainDisposant).getMarie()));
-      //  int prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
+        //  int prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
 
-          // System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
+        // System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
         while(prochainLiberer==libere && prochainDisposant!=-1)
         {
-           // System.out.println(prochainDisposant+" refuse");
+            // System.out.println(prochainDisposant+" refuse");
+            count.countPlusPlus();
             etape++;
             prochainDisposant=proposantLibere.getProchainListeAttente(etape);
-            //System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
+            // System.out.println("Prochaine proposition de "+(char)(libere+'A')+" : "+prochainDisposant);
             if(prochainDisposant==-1)
             {
                 return new Couple(-1,libere);
             }
             prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.getOrDefault(prochainDisposant,disposants.get(prochainDisposant).getMarie()));
-           // prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
+            // prochainLiberer=disposants.get(prochainDisposant).reponse(libere,mariagePossible.get(prochainDisposant).getProposant());
         }
 
         return new Couple(prochainDisposant,prochainLiberer); // return l'individu qui prendrai le proposant, et le prochain proposant liberer
     }
+
 
 
     public static List<Disposant> init(int seed,List<Proposant> proposantList,int totalDemande,int noteMin,int noteMax,double bruit,double noteMoyenne, double moyenneNbrVoeux)
@@ -431,7 +450,7 @@ public class Main {
         Strategie strategie = new StrategieDefault();
        for(int jour = 0; jour < nbrJour ; jour++)
        {
-           System.out.println("Jour :"+jour);
+          // System.out.println("Jour :"+jour);
           // System.out.println("Jour "+jour);
         //   System.out.println("Jour : "+jour+" / "+nbrJour);
          //  System.out.println("---------------------------");
@@ -439,7 +458,7 @@ public class Main {
            Appel(proposantList,disposantsList);
          //  printListe(proposants,disposants);
            Reponse(strategie,proposantList,disposantsList);
-           System.out.println(searchCycle(disposantsList,proposantList)+" Cycle trouvé");
+           //System.out.println(searchCycle(disposantsList,proposantList));
          //  printListe(proposants,disposants);
        }
     }
