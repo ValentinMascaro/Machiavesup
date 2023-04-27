@@ -9,13 +9,17 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         int seed = 1;
-        try{
-            FileWriter nbCycle = new FileWriter("nbCycle.txt");
-            FileWriter nbEtudiantTraverse = new FileWriter("nbEtudiantTraverse.txt");
-            FileWriter nbEtudiantUpgrade = new FileWriter("nbEtudiantUpgrade.txt");
-        for(int nbrTest = 0 ; nbrTest<10;nbrTest++) { //[89, 56, 83, 22, 69, 105, 104, 92, 116, 73]
+        int nbrTest = 0;
+        double preAvg=Double.MAX_VALUE;
+        double avg=0.0;
+        double epsilon = 0.01;
+        List<Pair<Integer, Integer>> cycle;
+        double nbCycle = 0;
+        int nbEtudiantTraverse = 0;
+        int nbEtudiantAmeliorer = 0;
+        do{//for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
             double bruit = 0.30;
-            for(int testBruit =0;testBruit<1;testBruit++) {
+           // for(int testBruit =0;testBruit<1;testBruit++) {
                 //System.out.println("Seed pour ce test : " + seed);
                 double nbrdevoeuxmoyen = 8.5;
                 int nbrbloc = 20;
@@ -31,38 +35,21 @@ public class Main {
                 }
                 List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc / 2, nbrdevoeuxmoyen);
                 Parcoursup(15, disposantList, proposantList);
-                //try {
-
-                    List<Pair<Integer,Integer>> cycle=searchCycle(disposantList, proposantList);
-                    nbCycle.write(cycle.size()+"\n");
-                    nbEtudiantTraverse.write("[ ");
-                    for(Pair<Integer, Integer> integer : cycle) {
-                        nbEtudiantTraverse.write(integer.first()+" ,");
+                cycle=searchCycle(disposantList, proposantList);
+                if (cycle.size() > 0) {
+                    for (Pair<Integer, Integer> integer : cycle) {
+                        nbEtudiantTraverse += integer.first();
+                        nbEtudiantAmeliorer += integer.second();
                     }
-                    nbEtudiantTraverse.write("]"+"\n");
-                    nbEtudiantUpgrade.write("[ ");
-                    for(Pair<Integer, Integer> integer : cycle) {
-                        nbEtudiantUpgrade.write(integer.second()+" ,");
-                    }
-                    nbEtudiantUpgrade.write("]"+"\n");
-                    seed++;
-                    //System.out.println("Fin");
-
-                //System.out.println("Seed :" + seed+" Bruit : "+bruit);
-                bruit+=0.1;
-            }
+                }
+            preAvg = avg;
+            avg = nbEtudiantAmeliorer / ++nbrTest;
             seed++;
-        }
-            nbCycle.close();
-            nbEtudiantTraverse.close();
-            nbEtudiantUpgrade.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("fin");
+           // }
+            seed++;
+            System.out.println(avg+" "+preAvg);
+        }while(Math.abs(preAvg-avg)>epsilon || cycle.size()==0);
     }
-
     private static void printListeFormationByReputation(Map<Integer, List<Proposant>> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
             List<Proposant> list = entry.getValue();
