@@ -5,45 +5,51 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-      // int seed =67;
-        int seed=1;
-        int playset=4;
-        // test();
-        try {
-            FileWriter nbCycle = new FileWriter("nbCycle.txt");
-            FileWriter nbEtudiantTraverse = new FileWriter("nbEtudiantTraverse.txt");
-            FileWriter nbEtudiantUpgrade = new FileWriter("nbEtudiantUpgrade.txt");
-            for (int i = 0; i < 100000; i++) {
+        // int seed =67;
+        int seed = 1;
+        int playset = 1000;
+
+        for(;playset<=10000;playset+=1000) {
+            int nbrTest = 0;
+        double preAvg=Double.MAX_VALUE;
+        double avg=0.0;
+        double epsilon = 0.01;
+        List<Pair<Integer, Integer>> cycle;
+            double nbCycle = 0;
+            int nbEtudiantTraverse = 0;
+            int nbEtudiantAmeliorer = 0;
+             do{
                 List<Disposant> disposants = new ArrayList<>();
                 List<Proposant> proposants = new ArrayList<>();
-               // System.out.println(seed);
+                // System.out.println(seed);
                 init(disposants, proposants, playset, seed);
                 galeShapley(proposants, disposants, true);
-                List<Pair<Integer,Integer>> cycle=searchCycle(disposants, proposants);
-                nbCycle.write(cycle.size()+"\n");
-                nbEtudiantTraverse.write("[ ");
-                for(Pair<Integer, Integer> integer : cycle) {
-                    nbEtudiantTraverse.write(integer.first()+" ,");
+                cycle = searchCycle(disposants, proposants);
+                nbCycle += cycle.size();
+                if (cycle.size() > 0) {
+                    for (Pair<Integer, Integer> integer : cycle) {
+                        nbEtudiantTraverse += integer.first();
+                        nbEtudiantAmeliorer += integer.second();
+                    }
                 }
-                nbEtudiantTraverse.write("]"+"\n");
-                nbEtudiantUpgrade.write("[ ");
-                for(Pair<Integer, Integer> integer : cycle) {
-                    nbEtudiantUpgrade.write(integer.second()+" ,");
-                }
-                nbEtudiantUpgrade.write("]"+"\n");
+                preAvg = avg;
+                avg = nbEtudiantAmeliorer / ++nbrTest;
                 seed++;
-               // printListeR(proposants, disposants);
-            }
+
+            }while(Math.abs(preAvg-avg)>epsilon || cycle.size()==0);
+
+                // printListeR(proposants, disposants);
+            System.out.println("Nbr test : "+nbrTest);
+            System.out.println("Playset : " + playset);
+            System.out.println("Total cycle : " + nbCycle);
+            System.out.println("Nombre de cycle moyen :" + nbCycle / nbrTest + " par seed");
+            System.out.println("Nombre d'étudiant traversé en moyenne : " + nbEtudiantTraverse / nbCycle);
+            System.out.println("Nombre d'étudiant amélioré en moyenne : " + nbEtudiantAmeliorer / nbCycle);
+
+        }
             System.out.println("Fin");
-            nbCycle.close();
-            nbEtudiantTraverse.close();
-            nbEtudiantUpgrade.close();
         }
 
- catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
     public static List<Pair<Integer,Integer>> searchCycle(List<Disposant> disposants,List<Proposant> proposants){
         List<Pair<Integer,Integer>> nbrCycleTaille=new ArrayList<>();
 
