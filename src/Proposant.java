@@ -25,8 +25,10 @@ public class Proposant {
     protected int nbrDemandeRecu;
     private double nbrBloc;
     private Random rand;
+    private int nbrPropRefus;
 
     public Proposant(int id, int seed, int demande, double note, int capacite,double nbrBloc) {
+        this.nbrPropRefus=capacite;
         this.nbrBloc=nbrBloc;
         this.id = id;
         this.listeChoixPossible=new ArrayList<Integer>();
@@ -69,11 +71,13 @@ public class Proposant {
     public void addEtudiantRefus(Integer e){
         if (listeAcceptation.contains(e))
         {
+
             this.listeAcceptation.remove(e);
             if(!this.listeAttente.isEmpty()) {
                 Integer etu = this.listeAttente.remove(0);
                 this.listeAcceptation.add(etu);
             }
+            this.nbrPropRefus++;
         }
         else if(listeAttente.contains(e))
         {
@@ -276,5 +280,9 @@ public class Proposant {
 
     public int getNbrDemandeRecu() {
         return nbrDemandeRecu;
+    }
+
+    public int getNbrPropRefus() {
+        return nbrPropRefus;
     }
 }

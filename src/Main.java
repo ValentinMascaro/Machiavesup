@@ -8,22 +8,22 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        int seed = 1;
-        int nbrTest = 0;
-        double preAvg=Double.MAX_VALUE;
-        double avg=0.0;
-        double epsilon = 0.01;
+
         List<Pair<Integer, Integer>> cycle;
-        double nbCycle = 0;
-        int nbEtudiantTraverse = 0;
-        int nbEtudiantAmeliorer = 0;
-        do{//for(int nbrTest = 0 ; nbrTest<10;nbrTest++) {
-            double bruit = 0.30;
-           // for(int testBruit =0;testBruit<1;testBruit++) {
-                //System.out.println("Seed pour ce test : " + seed);
-                double nbrdevoeuxmoyen = 8.5;
-                int nbrbloc = 20;
-                csvSimuBny csv = new csvSimuBny("fr-esr-parcoursup - Copie.csv", seed);
+        double bruit = 0.30;
+        double nbrdevoeuxmoyen = 8.5;
+        int nbrbloc = 20;
+        for(;bruit<=0.3;bruit+=0.1) {
+            int seed = 1;
+            double nbrTest = 0;
+            double preAvg=Double.MAX_VALUE;
+            double avg=0.0;
+            double epsilon = 0.001;
+            double nbCycle = 0;
+            int nbEtudiantTraverse = 0;
+            int nbEtudiantAmeliorer = 0;
+        //    do {
+                csvSimuBny csv = new csvSimuBny("cpgeECGE.csv", seed);
                 csv.setNbrdemande();
                 int playset = csv.getNbrFormation();
                 csv.setFormation(nbrbloc);
@@ -33,22 +33,34 @@ public class Main {
                 for (int i = 0; i < csv.getNbrdemande().size(); i++) {
                     totalDemande += csv.getNbrdemande().get(i);
                 }
-                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc / 2, nbrdevoeuxmoyen);
+                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, 10.0, nbrdevoeuxmoyen);
                 Parcoursup(15, disposantList, proposantList);
-                cycle=searchCycle(disposantList, proposantList);
+                cycle = searchCycle(disposantList, proposantList);
                 if (cycle.size() > 0) {
+                    nbCycle += cycle.size();
                     for (Pair<Integer, Integer> integer : cycle) {
                         nbEtudiantTraverse += integer.first();
                         nbEtudiantAmeliorer += integer.second();
                     }
                 }
-            preAvg = avg;
-            avg = nbEtudiantAmeliorer / ++nbrTest;
-            seed++;
-           // }
-            seed++;
-            System.out.println(avg+" "+preAvg);
-        }while(Math.abs(preAvg-avg)>epsilon || cycle.size()==0);
+                preAvg = avg;
+                avg = nbCycle / ++nbrTest;
+                seed++;
+                // System.out.println(avg+" "+preAvg+" "+nbrTest);
+                for(Proposant p : proposantList)
+                {
+                    System.out.println("Formation : "+ (p.getId() +2)+ " nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu);
+                }
+           // } while (Math.abs(preAvg - avg) > epsilon || nbrTest < 100);
+            System.out.println("Bruit :"+bruit);
+            System.out.println("Nbr test : " + nbrTest);
+            System.out.println("Total cycle : " + nbCycle);
+            System.out.println("Nombre de cycle moyen :" + nbCycle / nbrTest + " par seed");
+            System.out.println("Nombre d'étudiant traversé en moyenne : " + nbEtudiantTraverse / nbCycle);
+            System.out.println("Nombre d'étudiant amélioré en moyenne : " + nbEtudiantAmeliorer / nbCycle);
+            System.out.println("------");
+
+        }
     }
     private static void printListeFormationByReputation(Map<Integer, List<Proposant>> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
@@ -174,7 +186,7 @@ public class Main {
 
 
 
-    public static List<Disposant> init(int seed,List<Proposant> proposantList,int totalDemande,int noteMin,int noteMax,double bruit,double noteMoyenne, double moyenneNbrVoeux)
+    public static List<Disposant> init(int seed,List<Proposant> proposantListOriginal,int totalDemande,int noteMin,int noteMax,double bruit,double noteMoyenne, double moyenneNbrVoeux)
     {
         List<Disposant> disposants = new ArrayList<>();
         int nbDemande=0;
@@ -190,19 +202,27 @@ public class Main {
         }
         disposants.stream().sorted((a,b)-> (int)Math.signum(a.getNote()-b.getNote()));
         List<Disposant> dispoCopy = new ArrayList<>(disposants);
-
-
-        for(int i=0;i<proposantList.size();i++)
+        List<Proposant> proposantList = new ArrayList<>(proposantListOriginal);
+        int i=0;
+        while(proposantList.size()>0)
         {
+
+            if(i>=proposantList.size())
+            {
+                i=0;
+            }
             Proposant p = proposantList.get(i);
+           // System.out.println(p.getId());
             //System.out.println("I "+i);
-            while(p.getNbrDemandeRecu()<p.getDemande())
+            if(p.getNbrDemandeRecu()<p.getDemande())//while(p.getNbrDemandeRecu()<p.getDemande())
             {
 
                 //System.out.println("Id :"+p.getId()+" Nb Demande recu :"+p.getNbrDemandeRecu());
-                double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,p.getReputation(),1.5),noteMin,noteMax);
+                double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,10.0,3.5),noteMin,noteMax);
+              //  System.out.println(choix);
                 //        System.out.println("Choix :"+choix);
-                int index=(int)Math.round(disposants.size()*choix);
+                int index = rand.nextInt(0,dispoCopy.size()-1);//int index=(int)Math.round(disposants.size()*choix);
+                //System.out.println(index);
                 int decalage=1;
                 int signe=-1;
                 while(index>=disposants.size() || index<0 || !disposants.get(index).canAffect(p))
@@ -216,14 +236,12 @@ public class Main {
                 {
                     disposants.remove(disposants.get(index));
                 }
+            }else {
+                proposantList.remove(i);
             }
+            i++;
         }
-        for(int i = 0 ; i<proposantList.size();i++)
-        {
-            proposantList.get(i).generateAllInnerListe(seed);
-            seed++;
-        }
-        for(Proposant p : proposantList)
+        for(Proposant p : proposantListOriginal)
         {
             p.generateAllInnerListe(bruit);
         }
@@ -445,6 +463,9 @@ public class Main {
            Appel(proposantList,disposantsList);
          //  printListe(proposants,disposants);
            Reponse(strategie,proposantList,disposantsList);
+           //int x=9127;
+           //System.out.println("Etudiant : "+disposantsList.get(x).getListeSouhait()+"\n"+disposantsList.get(x).getListeAccepte()+"\n"+disposantsList.get(x).getListeAttente()+"\n"+disposantsList.get(x).getListeRefus());
+           //System.out.println("Formation :"+proposantList.get(140).getListeAcceptation());
            //System.out.println(searchCycle(disposantsList,proposantList));
          //  printListe(proposants,disposants);
        }
