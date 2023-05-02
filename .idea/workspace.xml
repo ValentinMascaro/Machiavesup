@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Rang d'appel incohérent, encore pire">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +25,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="listePartielOrdonne" />
+        <entry key="$PROJECT_DIR$" value="ParcoursupSimulationFromCsv" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -136,35 +139,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681810995140</updated>
     </task>
-    <task id="LOCAL-00010" summary="TODO init">
-      <created>1682073401042</created>
+    <task id="LOCAL-00010" summary="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(">
+      <created>1681816045482</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1682073401042</updated>
+      <updated>1681816045482</updated>
     </task>
-    <task id="LOCAL-00011" summary="Stats ready">
-      <created>1682620379577</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1682620379577</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Rang d'appel incohérent">
-      <created>1682877061345</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1682877061345</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Rang d'appel incohérent, encore pire">
-      <created>1683011746610</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1683011746610</updated>
-    </task>
-    <option name="localTasksCounter" value="14" />
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -200,20 +182,16 @@
     <MESSAGE value="csvReader done / repartition par bloc à tester" />
     <MESSAGE value="csvReader done / liste souhait etudiant à faire" />
     <MESSAGE value="Repartition demande cohérente à 90%" />
-    <MESSAGE value="TODO init" />
-    <MESSAGE value="Stats ready" />
-    <MESSAGE value="Rang d'appel incohérent" />
-    <MESSAGE value="Rang d'appel incohérent, encore pire" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rang d'appel incohérent, encore pire" />
+    <MESSAGE value="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(" />
+    <option name="LAST_COMMIT_MESSAGE" value="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <condition expression="i==122" language="JAVA" />
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>233</line>
-          <option name="timeStamp" value="2" />
+          <url>file://$PROJECT_DIR$/src/Proposant.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

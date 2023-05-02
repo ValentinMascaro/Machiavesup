@@ -10,10 +10,10 @@ public class Main {
     public static void main(String[] args) {
 
         List<Pair<Integer, Integer>> cycle;
-        double bruit = 0.3;
+        double bruit = 0.001;
         double nbrdevoeuxmoyen = 8.5;
         int nbrbloc = 20;
-        for(;bruit<=0.3;bruit+=0.1) {
+        for(;bruit<=0.001;bruit+=0.1) {
             int seed = 1;
             double nbrTest = 0;
             double preAvg=Double.MAX_VALUE;
@@ -23,7 +23,7 @@ public class Main {
             int nbEtudiantTraverse = 0;
             int nbEtudiantAmeliorer = 0;
         //    do {
-                csvSimuBny csv = new csvSimuBny("cpgeECGE.csv", seed);
+                csvSimuBny csv = new csvSimuBny("cpgeMpsi.csv", seed);
                 csv.setNbrdemande();
                 //int playset = csv.getNbrFormation();
                 csv.setFormation(nbrbloc);
@@ -54,6 +54,11 @@ public class Main {
                 for(Proposant p : proposantList)
                 {
                     System.out.println("Formation : "+ (p.getId() +2)+" Note :"+p.getReputation() +" nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu);
+                }
+            disposantList=disposantList.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
+                for(Disposant d : disposantList.subList(0,100))
+                {
+                    System.out.println(d.getListeSouhait());
                 }
            // } while (Math.abs(preAvg - avg) > epsilon || nbrTest < 100);
             System.out.println("Bruit :"+bruit);
@@ -209,15 +214,21 @@ public class Main {
         }*/
         while(nbDemande<totalDemande*1.1)
         {
-            Disposant d = new Disposant(id,seed,bruit,noteMoyenne,moyenneNbrVoeux,noteMax);
+            Disposant d = new Disposant(id,seed,bruit,moyenneNbrVoeux,moyenneNbrVoeux,noteMax);
             disposants.add(d);
             nbDemande+=d.getNbrSouhait();
             seed++;
             id++;
         }
 
+        disposants=disposants.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
+        int dispoNewId=0;
+        for(Disposant d : disposants)
+        {
+            d.setId(dispoNewId);
+            dispoNewId++;
+        }
         List<Disposant> dispoCopy = new ArrayList<>(disposants);
-        dispoCopy=dispoCopy.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
         List<Proposant> proposantList = new ArrayList<>(proposantListOriginal);
        // proposantList.stream().sorted((a,b)-> (int)Math.signum(a.getReputation()-b.getReputation()));
         int i=0;

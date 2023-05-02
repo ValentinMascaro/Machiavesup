@@ -63,7 +63,8 @@ public class Disposant {
         double x = note+1.0;
         // Calculer la note aléatoire entre x et y
        this.note= aleatoire * (y - x) + x;
-      //  this.note = note+rand.nextDouble();
+        //this.note = note+rand.nextDouble();
+
         this.bruit = bruit;
     }
     public boolean canAffect(Proposant proposant)

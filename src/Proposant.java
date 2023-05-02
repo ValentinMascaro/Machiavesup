@@ -71,7 +71,6 @@ public class Proposant {
     public void addEtudiantRefus(Integer e){
         if (listeAcceptation.contains(e))
         {
-
             this.listeAcceptation.remove(e);
             if(!this.listeAttente.isEmpty()) {
                 Integer etu = this.listeAttente.remove(0);
@@ -172,7 +171,8 @@ public class Proposant {
     }
     public void generateListePreference(double bruit) {
 
-        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+this.rand.nextDouble(-bruit*this.nbrBloc,bruit*nbrBloc)));
+        Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()));
+       // Function<Disposant,Pair<Disposant,Double>> noteBruiter =  (disposant -> new Pair(disposant,disposant.getNote()+this.rand.nextDouble(-bruit*this.nbrBloc,bruit*nbrBloc)));
         Stream<Pair<Disposant, Double>> listeNoteBruiter = listeDossier.stream().map(noteBruiter);
         this.listeSouhait= listeNoteBruiter.sorted( (a,b) -> (int)Math.signum(a.second() - b.second())).map(Pair::first).map(Disposant::getId).toList();
 
