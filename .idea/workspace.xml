@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Stats ready">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Rang d'appel incohérent">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StrategieDefault.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/StrategieDefault.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/csvSimuBny.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/csvSimuBny.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +154,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682620379577</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Rang d'appel incohérent">
+      <created>1682877061345</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1682877061345</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -190,7 +199,8 @@
     <MESSAGE value="Repartition demande cohérente à 90%" />
     <MESSAGE value="TODO init" />
     <MESSAGE value="Stats ready" />
-    <option name="LAST_COMMIT_MESSAGE" value="Stats ready" />
+    <MESSAGE value="Rang d'appel incohérent" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rang d'appel incohérent" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -198,7 +208,7 @@
         <line-breakpoint enabled="true" type="java-line">
           <condition expression="i==122" language="JAVA" />
           <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>215</line>
+          <line>233</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

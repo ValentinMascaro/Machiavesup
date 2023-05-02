@@ -34,7 +34,7 @@ public class csvSimuBny {
         List<Integer> demandeFormation = this.nbrdemande;
         List<Integer> capaciteFormation=this.getCapacite();
         this.nbrFormation=capaciteFormation.size();
-        double max = noteFormation.stream().mapToDouble(d -> d).max().orElse(Double.NEGATIVE_INFINITY);
+        double max = noteFormation.stream().mapToDouble(d -> d).max().orElse(0.0);
         double min = Collections.min(noteFormation);
        // Map<Integer,List<Double>> proposants = new HashMap<>();
         this.formation=new HashMap<>();
@@ -45,15 +45,9 @@ public class csvSimuBny {
         }
         for(int i =0;i<demandeFormation.size();i++)
         {
+           // System.out.println("Max : "+max+" Min "+min);
             double note =  (noteFormation.get(i) - min) / (max - min) * nbrBloc;
-            /*int key = (int) note;
-            if (key % 2 == 0) {
-                // Si l'entier est déjà pair, on le retourne
-                ;
-            } else {
-                // Sinon, on retourne l'entier pair le plus proche
-                key =(int) Math.round(note / 2.0) * 2;
-            }*/
+           // System.out.println(i+" "+noteFormation.get(i)+" "+note);
             int key = (int) note;
            // System.out.println(i+" | "+note+" | "+key);
             //proposants.get(key).add(note);
@@ -64,8 +58,8 @@ public class csvSimuBny {
     }
     public List<Double> getReputation()
     {
-        List<Integer> liste2 = this.getNbrAdmis();
-        List<Integer> liste1 = this.getNbrProposition();
+        List<Double> liste2 = this.getNbrAdmis();
+        List<Double> liste1 = this.getNbrProposition();
         if (liste1.size() != liste2.size()) {
             throw new IllegalArgumentException("Les deux listes doivent avoir la même taille.");
         }
@@ -77,21 +71,7 @@ public class csvSimuBny {
 
         return resultat;
     }
-    public List<Double> getReputation2()
-    {
-        List<Integer> liste1 = this.getNbrAdmis();
-        List<Integer> liste2 = this.getNbrProposition();
-        if (liste1.size() != liste2.size()) {
-            throw new IllegalArgumentException("Les deux listes doivent avoir la même taille.");
-        }
 
-        List<Double> resultat = IntStream.range(0, liste1.size())
-                .mapToDouble(i ->20*((double)liste1.get(i) / (double)liste2.get(i)))
-                .boxed()
-                .collect(Collectors.toList());
-
-        return resultat;
-    }
     public void setNbrdemande() {
         BufferedReader reader = null;
         try {
@@ -188,7 +168,7 @@ public class csvSimuBny {
         // Afficher les valeurs stockées dans le tableau
         return columnEffectif;
     }
-    public List<Integer> getNbrProposition() {
+    public List<Double> getNbrProposition() {
         //String csvFile = "chemin/vers/votre/fichier.csv";
         BufferedReader reader = null;
         try {
@@ -196,7 +176,7 @@ public class csvSimuBny {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        List<Integer> columnEffectif = new ArrayList<>();
+        List<Double> columnEffectif = new ArrayList<>();
 
         try {
            // reader = new BufferedReader(new FileReader(csvFile));
@@ -223,8 +203,14 @@ public class csvSimuBny {
             // Taille du tableau à ajuster selon la taille du fichier CSV
             while ((nextLine = reader.readLine()) != null) {
                 String[] columns = nextLine.split(";"); // Séparer les colonnes par le séparateur ";"
-                columnEffectif.add(Integer.valueOf(columns[colIndex])); // Stocker la valeur de la colonne "Effectif total des candidats pour une formation"
-                i++;
+                if(Double.valueOf(columns[colIndex])==0.0)
+                {
+                    columnEffectif.add(1.0);
+                }
+                else {
+                    columnEffectif.add(Double.valueOf(columns[colIndex])); // Stocker la valeur de la colonne "Effectif total des candidats pour une formation"
+                }
+                    i++;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -238,7 +224,7 @@ public class csvSimuBny {
         // Afficher les valeurs stockées dans le tableau
         return columnEffectif;
     }
-    public List<Integer> getNbrAdmis()  {
+    public List<Double> getNbrAdmis()  {
        // String csvFile = "chemin/vers/votre/fichier.csv";
         BufferedReader reader = null;
         try {
@@ -246,7 +232,7 @@ public class csvSimuBny {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        List<Integer> columnEffectif = new ArrayList<>();
+        List<Double> columnEffectif = new ArrayList<>();
 
         try {
            // reader = new BufferedReader(new FileReader(csvFile));
@@ -273,7 +259,13 @@ public class csvSimuBny {
             // Taille du tableau à ajuster selon la taille du fichier CSV
             while ((nextLine = reader.readLine()) != null) {
                 String[] columns = nextLine.split(";"); // Séparer les colonnes par le séparateur ";"
-                columnEffectif.add(Integer.valueOf(columns[colIndex])); // Stocker la valeur de la colonne "Effectif total des candidats pour une formation"
+                if(Double.valueOf(columns[colIndex])==0.0)
+                {
+                    columnEffectif.add(1.0);
+                }else {
+                    columnEffectif.add(Double.valueOf(columns[colIndex]));
+                }
+                 // Stocker la valeur de la colonne "Effectif total des candidats pour une formation"
                 i++;
             }
         } catch (IOException e) {

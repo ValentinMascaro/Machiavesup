@@ -56,13 +56,14 @@ public class Disposant {
         this.seed=seed;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
+        this.nbrSouhait = 10;//this.generateRandomNumber(moyenneNbrVoeux);
         this.marie=-1;
         double aleatoire = rand.nextDouble();
         double y = note;
         double x = note+1.0;
         // Calculer la note aléatoire entre x et y
        this.note= aleatoire * (y - x) + x;
+      //  this.note = note+rand.nextDouble();
         this.bruit = bruit;
     }
     public boolean canAffect(Proposant proposant)

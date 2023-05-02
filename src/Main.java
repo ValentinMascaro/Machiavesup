@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 
         List<Pair<Integer, Integer>> cycle;
-        double bruit = 0.30;
+        double bruit = 0.3;
         double nbrdevoeuxmoyen = 8.5;
         int nbrbloc = 20;
         for(;bruit<=0.3;bruit+=0.1) {
@@ -25,16 +25,19 @@ public class Main {
         //    do {
                 csvSimuBny csv = new csvSimuBny("cpgeECGE.csv", seed);
                 csv.setNbrdemande();
-                int playset = csv.getNbrFormation();
+                //int playset = csv.getNbrFormation();
                 csv.setFormation(nbrbloc);
-                Map<Integer, List<Proposant>> proposants = csv.getFormation();
+                //Map<Integer, List<Proposant>> proposants = csv.getFormation();
                 List<Proposant> proposantList = csv.getFormationList();
                 int totalDemande = 0;
                 for (int i = 0; i < csv.getNbrdemande().size(); i++) {
                     totalDemande += csv.getNbrdemande().get(i);
                 }
-                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, 10.0, nbrdevoeuxmoyen);
+
+                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc/2.0, nbrdevoeuxmoyen);
+            System.out.println("fin init");
                 Parcoursup(15, disposantList, proposantList);
+            System.out.println("Nombre demande :"+totalDemande+" Nombre étudiant :"+disposantList.size()+" Nombre formation :"+proposantList.size());
                 cycle = searchCycle(disposantList, proposantList);
                 if (cycle.size() > 0) {
                     nbCycle += cycle.size();
@@ -47,9 +50,10 @@ public class Main {
                 avg = nbCycle / ++nbrTest;
                 seed++;
                 // System.out.println(avg+" "+preAvg+" "+nbrTest);
+            proposantList=proposantList.stream().sorted((a,b)-> Double.compare(a.getReputation(),b.getReputation())).collect(Collectors.toList());
                 for(Proposant p : proposantList)
                 {
-                    System.out.println("Formation : "+ (p.getId() +2)+ " nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu);
+                    System.out.println("Formation : "+ (p.getId() +2)+" Note :"+p.getReputation() +" nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu);
                 }
            // } while (Math.abs(preAvg - avg) > epsilon || nbrTest < 100);
             System.out.println("Bruit :"+bruit);
@@ -192,7 +196,18 @@ public class Main {
         int nbDemande=0;
         int id=0;
         Random rand = new Random(seed);
-        while(nbDemande<totalDemande*1.05)
+       /* for(Proposant p : proposantListOriginal)
+        {
+            int nbDemandeTmp=0;
+            while(nbDemandeTmp<p.getDemande()+20) {
+                Disposant d = new Disposant(id, seed, bruit, p.getReputation(), moyenneNbrVoeux, noteMax);
+                disposants.add(d);
+                nbDemandeTmp += d.getNbrSouhait();
+                seed++;
+                id++;
+            }
+        }*/
+        while(nbDemande<totalDemande*1.1)
         {
             Disposant d = new Disposant(id,seed,bruit,noteMoyenne,moyenneNbrVoeux,noteMax);
             disposants.add(d);
@@ -200,10 +215,13 @@ public class Main {
             seed++;
             id++;
         }
-        disposants.stream().sorted((a,b)-> (int)Math.signum(a.getNote()-b.getNote()));
+
         List<Disposant> dispoCopy = new ArrayList<>(disposants);
+        dispoCopy=dispoCopy.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
         List<Proposant> proposantList = new ArrayList<>(proposantListOriginal);
+       // proposantList.stream().sorted((a,b)-> (int)Math.signum(a.getReputation()-b.getReputation()));
         int i=0;
+      // for(int i =0 ; i<proposantList.size();i++){
         while(proposantList.size()>0)
         {
 
@@ -213,15 +231,15 @@ public class Main {
             }
             Proposant p = proposantList.get(i);
            // System.out.println(p.getId());
-            //System.out.println("I "+i);
-            if(p.getNbrDemandeRecu()<p.getDemande())//while(p.getNbrDemandeRecu()<p.getDemande())
+            System.out.println("I "+i);
+            if(p.getNbrDemandeRecu()<p.getDemande())//while(p.getNbrDemandeRecu()<p.getDemande())//
             {
 
                 //System.out.println("Id :"+p.getId()+" Nb Demande recu :"+p.getNbrDemandeRecu());
-                double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,10.0,3.5),noteMin,noteMax);
-              //  System.out.println(choix);
+                //double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,noteMoyenne,1.0),noteMin,noteMax);
+                double choix = convertToRange(p.getReputation(),noteMin,noteMax);
                 //        System.out.println("Choix :"+choix);
-                int index = rand.nextInt(0,dispoCopy.size()-1);//int index=(int)Math.round(disposants.size()*choix);
+               int index=(int)Math.round(disposants.size()*choix);
                 //System.out.println(index);
                 int decalage=1;
                 int signe=-1;
@@ -232,11 +250,15 @@ public class Main {
                   signe*=-1;
                 }
                 disposants.get(index).affectSouhait(p);
+               // if(disposants.size()>22000) {
+             //       System.out.println(p.getReputation() + " " + disposants.get(index).getNote());
+                //}
                 if(disposants.get(index).getNbrSouhait()==disposants.get(index).getListeSouhait().size())
                 {
                     disposants.remove(disposants.get(index));
                 }
-            }else {
+            }
+           else {
                 proposantList.remove(i);
             }
             i++;
@@ -273,19 +295,7 @@ public class Main {
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
         return valeur;
     }
-    public static void init(List<Disposant> disposants,Map<Integer,List<Proposant>> proposants,int seed,List<Proposant> proposantList,int totalDemande)
-    {
-        for(int i = 0 ; i<disposants.size();i++)
-        {
-            disposants.get(i).genererListeSouhait(proposants,proposantList,totalDemande) ;
-            disposants.get(i).genererComparaison();
-        }
-        for(int i = 0 ; i<proposantList.size();i++)
-        {
-            proposantList.get(i).generateAllInnerListe(seed);
-            seed++;
-        }
-    }
+
 
     public static void printListe(List<Proposant> proposant,List<Disposant> disposant)
     {

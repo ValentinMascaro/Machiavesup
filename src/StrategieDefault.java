@@ -33,5 +33,5 @@ public class StrategieDefault implements Strategie{
 
         int indiceMeilleurFormationActuel = etudiant.getListeSouhait().indexOf(formationAccepte);
         return new ArrayList<>(etudiant.getListeAttente().stream().filter(c-> etudiant.getListeSouhait().indexOf(c) < indiceMeilleurFormationActuel).collect(Collectors.toList()));
-    }
+    } // return new ArrayList<>(etudiant.getListeAttente());
 }
