@@ -56,7 +56,7 @@ public class Disposant {
         this.seed=seed;
         //this.nbrSouhait=Math.abs(rand.nextInt(1,playset+1));
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
-        this.nbrSouhait = 10;//this.generateRandomNumber(moyenneNbrVoeux);
+        this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
         this.marie=-1;
         double aleatoire = rand.nextDouble();
         double y = note;

@@ -239,23 +239,23 @@ public class Main {
                 //double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,noteMoyenne,1.0),noteMin,noteMax);
                 double choix = convertToRange(p.getReputation(),noteMin,noteMax);
                 //        System.out.println("Choix :"+choix);
-               int index=(int)Math.round(disposants.size()*choix);
+               int index=(int)Math.round(dispoCopy.size()*choix);
                 //System.out.println(index);
                 int decalage=1;
                 int signe=-1;
-                while(index>=disposants.size() || index<0 || !disposants.get(index).canAffect(p))
+                while(index>=dispoCopy.size() || index<0 || !dispoCopy.get(index).canAffect(p))
                 { // 0 1 2 3 4 5 6
                   index+=decalage*signe;
                   decalage++;
                   signe*=-1;
                 }
-                disposants.get(index).affectSouhait(p);
+                dispoCopy.get(index).affectSouhait(p);
                // if(disposants.size()>22000) {
              //       System.out.println(p.getReputation() + " " + disposants.get(index).getNote());
                 //}
-                if(disposants.get(index).getNbrSouhait()==disposants.get(index).getListeSouhait().size())
+                if(dispoCopy.get(index).getNbrSouhait()==dispoCopy.get(index).getListeSouhait().size())
                 {
-                    disposants.remove(disposants.get(index));
+                    dispoCopy.remove(dispoCopy.get(index));
                 }
             }
            else {
@@ -267,11 +267,11 @@ public class Main {
         {
             p.generateAllInnerListe(bruit);
         }
-        for(Disposant d : dispoCopy)
+        for(Disposant d : disposants)
         {
             d.genererComparaison();
         }
-        return dispoCopy;
+        return disposants;
     }
     public static double convertToRange(double value, double min, double max) {
         // Vérifier que la valeur se trouve dans la plage spécifiée
