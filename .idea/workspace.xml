@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Rang d'appel incohérent, bug fix">
+    <list default="true" id="420ef457-860e-49d0-9dc5-359cec223c87" name="Changes" comment="Stat Ready ( plz be the last )">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Disposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Proposant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Proposant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/StrategieDefault.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/StrategieDefault.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +145,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681816045482</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Stat Ready ( plz be the last )">
+      <created>1683465195964</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1683465195964</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -185,6 +189,7 @@
     <MESSAGE value="csvReader done / liste souhait etudiant à faire" />
     <MESSAGE value="Repartition demande cohérente à 90%" />
     <MESSAGE value="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(" />
-    <option name="LAST_COMMIT_MESSAGE" value="Parcoursup OK / repartion 90% / moyenne OK / bruit OK / cycle AUCUN :(" />
+    <MESSAGE value="Stat Ready ( plz be the last )" />
+    <option name="LAST_COMMIT_MESSAGE" value="Stat Ready ( plz be the last )" />
   </component>
 </project>
