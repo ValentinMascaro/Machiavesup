@@ -10,10 +10,11 @@ public class Main {
     public static void main(String[] args) {
 
         List<Pair<Integer, Integer>> cycle;
-        double bruit = 0.001;
+        double bruit = 0.005;
+
         double nbrdevoeuxmoyen = 8.5;
         int nbrbloc = 20;
-        for(;bruit<=0.001;bruit+=0.1) {
+        for(int testBruit = 0;testBruit<10;testBruit++) {
             int seed = 1;
             double nbrTest = 0;
             double preAvg=Double.MAX_VALUE;
@@ -22,8 +23,8 @@ public class Main {
             double nbCycle = 0;
             int nbEtudiantTraverse = 0;
             int nbEtudiantAmeliorer = 0;
-        //    do {
-                csvSimuBny csv = new csvSimuBny("cpgeMpsi.csv", seed);
+           do {
+                csvSimuBny csv = new csvSimuBny("cpgeECGE.csv", seed);
                 csv.setNbrdemande();
                 //int playset = csv.getNbrFormation();
                 csv.setFormation(nbrbloc);
@@ -33,11 +34,10 @@ public class Main {
                 for (int i = 0; i < csv.getNbrdemande().size(); i++) {
                     totalDemande += csv.getNbrdemande().get(i);
                 }
-
-                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, nbrbloc, bruit, nbrbloc/2.0, nbrdevoeuxmoyen);
-            System.out.println("fin init");
+                List<Disposant> disposantList = init(seed, proposantList, totalDemande, 0, proposantList.size(), bruit, nbrbloc/2.0, nbrdevoeuxmoyen);
+           // System.out.println("fin init");
                 Parcoursup(15, disposantList, proposantList);
-            System.out.println("Nombre demande :"+totalDemande+" Nombre étudiant :"+disposantList.size()+" Nombre formation :"+proposantList.size());
+           // System.out.println("Nombre demande :"+totalDemande+" Nombre étudiant :"+disposantList.size()+" Nombre formation :"+proposantList.size());
                 cycle = searchCycle(disposantList, proposantList);
                 if (cycle.size() > 0) {
                     nbCycle += cycle.size();
@@ -51,16 +51,17 @@ public class Main {
                 seed++;
                 // System.out.println(avg+" "+preAvg+" "+nbrTest);
             proposantList=proposantList.stream().sorted((a,b)-> Double.compare(a.getReputation(),b.getReputation())).collect(Collectors.toList());
-                for(Proposant p : proposantList)
+               /* for(Proposant p : proposantList.subList(0,20))
                 {
-                    System.out.println("Formation : "+ (p.getId() +2)+" Note :"+p.getReputation() +" nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu);
-                }
-            disposantList=disposantList.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
-                for(Disposant d : disposantList.subList(0,100))
+                    System.out.println("Formation : "+ (p.getId() )+" Note :"+p.getReputation() +" nbr étudiant appelé "+ p.getNbrPropRefus()+" Capacité :"+p.nbrIndividu+p.getListeSouhait().subList(0,10)+" "+p.getListeAcceptation()); // id +2 pour le excel
+                }*/
+         //   disposantList=disposantList.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
+              /*  for(Disposant d : disposantList.subList(0,100))
                 {
-                    System.out.println(d.getListeSouhait());
-                }
-           // } while (Math.abs(preAvg - avg) > epsilon || nbrTest < 100);
+                    System.out.println(d.getId()+" "+d.getNote()+d.getListeSouhait()+" "+d.getListeAccepte());
+
+                }*/
+            } while (Math.abs(preAvg - avg) > epsilon || nbrTest < 100);
             System.out.println("Bruit :"+bruit);
             System.out.println("Nbr test : " + nbrTest);
             System.out.println("Total cycle : " + nbCycle);
@@ -69,7 +70,7 @@ public class Main {
             System.out.println("Nombre d'étudiant amélioré en moyenne : " + nbEtudiantAmeliorer / nbCycle);
             System.out.println("------");
 
-        }
+        } // for
     }
     private static void printListeFormationByReputation(Map<Integer, List<Proposant>> proposants,boolean allOrNo) { // allOrNo =true -> affiche toute les formations, en rouge les non complete , false affiche uniquement les non remplies
         for (Map.Entry<Integer, List<Proposant>> entry : proposants.entrySet()) {
@@ -212,13 +213,22 @@ public class Main {
                 id++;
             }
         }*/
-        while(nbDemande<totalDemande*1.1)
+        while(nbDemande<totalDemande*1.05)
         {
-            Disposant d = new Disposant(id,seed,bruit,moyenneNbrVoeux,moyenneNbrVoeux,noteMax);
+            Disposant d = new Disposant(id,seed,bruit,moyenneNbrVoeux,moyenneNbrVoeux,20);
             disposants.add(d);
             nbDemande+=d.getNbrSouhait();
             seed++;
             id++;
+        }
+        proposantListOriginal = proposantListOriginal.stream().sorted((a, b) -> Double.compare(a.getReputation(), b.getReputation())).toList();
+        int pos = 0;
+        for(Proposant p : proposantListOriginal )
+        {
+            System.out.println(p.getId()+" -> "+pos);
+           p.setId(pos);
+            p.setPosition(pos);
+            pos++;
         }
 
         disposants=disposants.stream().sorted((a,b)-> Double.compare(a.getNote(),b.getNote())).collect(Collectors.toList());
@@ -242,15 +252,17 @@ public class Main {
             }
             Proposant p = proposantList.get(i);
            // System.out.println(p.getId());
-            System.out.println("I "+i);
+           // System.out.println("I "+i);
             if(p.getNbrDemandeRecu()<p.getDemande())//while(p.getNbrDemandeRecu()<p.getDemande())//
             {
 
                 //System.out.println("Id :"+p.getId()+" Nb Demande recu :"+p.getNbrDemandeRecu());
                 //double choix =  convertToRange(nombreAleatoireEntre(rand,noteMin,noteMax,noteMoyenne,1.0),noteMin,noteMax);
-                double choix = convertToRange(p.getReputation(),noteMin,noteMax);
+                //double choix = convertToRange(p.getReputation(),noteMin,noteMax);
+               // double choix = convertToRange(p.getPosition(),noteMin,noteMax);
                 //        System.out.println("Choix :"+choix);
-               int index=(int)Math.round(dispoCopy.size()*choix);
+                // (int) Math.round(x * 118.0 / 195.0);
+               int index=(int)Math.round(p.getPosition()*Math.round((double)dispoCopy.size()/proposantListOriginal.size())/(double)proposantListOriginal.size());
                 //System.out.println(index);
                 int decalage=1;
                 int signe=-1;
@@ -276,7 +288,8 @@ public class Main {
         }
         for(Proposant p : proposantListOriginal)
         {
-            p.generateAllInnerListe(bruit);
+            System.out.println(p.getId());
+            p.generateAllInnerListe(0.00001);
         }
         for(Disposant d : disposants)
         {
@@ -406,22 +419,22 @@ public class Main {
     public static void Appel(List<Proposant> proposants,List<Disposant> disposants)
     {
 
-        for(int i = 0 ; i < proposants.size();i++)
+        for(Proposant p:proposants)
         {
-            Proposant formationI = proposants.get(i);
-            List<Integer> listAccepte = formationI.getListeAcceptation();
-            List<Integer> listAttente = formationI.getListeAttente();
-            List<Integer> listRefus = formationI.getListeRefus();
+           // Proposant formationI = proposants.get(i);
+            List<Integer> listAccepte = p.getListeAcceptation();
+            List<Integer> listAttente = p.getListeAttente();
+            List<Integer> listRefus = p.getListeRefus();
             for(int j =0 ; j < listAccepte.size();j++)
             {
-                disposants.get(listAccepte.get(j)).add_accepte(i);
+                disposants.get(listAccepte.get(j)).add_accepte(p.getId());
             }
             for(int j =0 ; j < listAttente.size();j++)
             {
-                disposants.get(listAttente.get(j)).add_attente(i,j);
+                disposants.get(listAttente.get(j)).add_attente(p.getId(),j);
             }
             for (int j = 0; j < listRefus.size(); j++) {
-                disposants.get(listRefus.get(j)).add_refus(i);
+                disposants.get(listRefus.get(j)).add_refus(p.getId());
             }
         }
     }
@@ -476,13 +489,15 @@ public class Main {
         Strategie strategie = new StrategieDefault();
        for(int jour = 0; jour < nbrJour ; jour++)
        {
-          // System.out.println("Jour :"+jour);
+           System.out.println("Jour :"+jour);
           // System.out.println("Jour "+jour);
         //   System.out.println("Jour : "+jour+" / "+nbrJour);
          //  System.out.println("---------------------------");
          //  printListe(proposants,disposants);
+           System.out.println("Appel");
            Appel(proposantList,disposantsList);
          //  printListe(proposants,disposants);
+           System.out.println("Reponse");
            Reponse(strategie,proposantList,disposantsList);
            //int x=9127;
            //System.out.println("Etudiant : "+disposantsList.get(x).getListeSouhait()+"\n"+disposantsList.get(x).getListeAccepte()+"\n"+disposantsList.get(x).getListeAttente()+"\n"+disposantsList.get(x).getListeRefus());

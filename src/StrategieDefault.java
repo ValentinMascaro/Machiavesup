@@ -8,6 +8,7 @@ public class StrategieDefault implements Strategie{
     @Override
     public Integer choixParmiAcceptation(Disposant etudiant)
     {
+
         if(etudiant.getListeAccepte().size()==0)
         {
             return null;

@@ -6,7 +6,7 @@ public class Disposant {
     Random rand;
     List<Proposant> listeFormation;
     protected Comparaison logic;
-    protected int id;
+    private int id;
     protected int nbrSouhait;
     protected int playset;
     protected List<Integer> listeSouhait;
@@ -58,11 +58,11 @@ public class Disposant {
         // Arrondir la valeur à l'entier le plus proche entre 0 et 10 inclus
         this.nbrSouhait = this.generateRandomNumber(moyenneNbrVoeux);
         this.marie=-1;
-        double aleatoire = rand.nextDouble();
-        double y = note;
-        double x = note+1.0;
+        //double aleatoire = rand.nextDouble();
+        //double y = note;
+        //double x = note+1.0;
         // Calculer la note aléatoire entre x et y
-       this.note= aleatoire * (y - x) + x;
+       this.note= Math.abs(rand.nextGaussian(10.0,5.0)+0.001);
         //this.note = note+rand.nextDouble();
 
         this.bruit = bruit;
